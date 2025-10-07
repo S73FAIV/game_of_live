@@ -48,7 +48,7 @@ class GameController:
                 return False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
+                x = event.pos[0]
                 if x < WIDTH:  # inside grid
                     self.handle_grid_interaction(event.pos)
                 else:  # inside the sidebar
