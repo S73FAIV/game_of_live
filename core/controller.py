@@ -50,16 +50,32 @@ class GameController:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 if x < WIDTH:  # inside grid
-                    grid_x = x // TILE_SIZE
-                    grid_y = y // TILE_SIZE
-                    self.state.toggle_cell(grid_x, grid_y)
-                else:
-                    # Sidebar click handling
-                    if self.view.sidebar.button_step.collidepoint(event.pos):
-                        self.state.step()
+                    self.handle_grid_interaction(event.pos)
+                else:  # inside the sidebar
+                    self.handle_sidebarbuttons(event.pos)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.state.running = not self.state.running
 
         return True
+
+    def handle_grid_interaction(self, pos: tuple[int, int]) -> None:
+        """Check if Grid was clicked and act accordingly."""
+        x, y = pos
+        grid_x = x // TILE_SIZE
+        grid_y = y // TILE_SIZE
+        self.state.toggle_cell(grid_x, grid_y)
+
+    def handle_sidebarbuttons(self, pos: tuple[int, int]) -> None:
+        """Check if any sidebar button was clicked and act accordingly."""
+        for name, rect in self.view.sidebar.buttons.items():
+            if rect.collidepoint(pos):
+                match name:
+                    case "start":
+                        self.state.start()
+                    case "pause":
+                        self.state.pause()
+                    case "step":
+                        self.state.step()
+                break

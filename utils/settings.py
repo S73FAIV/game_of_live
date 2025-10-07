@@ -10,5 +10,4 @@ SIDEBAR_WIDTH = 200
 
 # Game Speed
 FPS = 30
-STEP_INTERVAL = 1 # seconds per simulation step
-
+STEP_INTERVAL = 0.8  # seconds per simulation step
