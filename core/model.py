@@ -56,3 +56,18 @@ class GameState:
         """Notify all subscribed views."""
         for cb in self.subscribers:
             cb()
+
+    def step(self) -> None:
+        """Advance the simulation by one generation."""
+        neighbors = sum(
+            np.roll(np.roll(self.grid, i, 0), j, 1)
+            for i in (-1, 0, 1)
+            for j in (-1, 0, 1)
+            if (i != 0 or j != 0)
+        )
+        new_grid = (
+            (neighbors == 3) | ((self.grid == 1) & (neighbors == 2))
+        ).astype(int)
+
+        self.grid = new_grid
+        self.notify

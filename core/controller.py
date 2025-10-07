@@ -53,7 +53,10 @@ class GameController:
                     grid_x = x // TILE_SIZE
                     grid_y = y // TILE_SIZE
                     self.state.toggle_cell(grid_x, grid_y)
-                # else click in sidebar — we'll handle that later
+                else:
+                    # Sidebar click handling
+                    if self.view.sidebar.button_step.collidepoint(event.pos):
+                        self.state.step()
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:

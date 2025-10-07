@@ -7,16 +7,11 @@ of the right-hand control panel within the Pygame window.
 import pygame
 
 from core.model import GameState
-from ui.colors import BLACK, GRAY
+from ui.colors import BLACK, GRAY, WHITE
 
 
 class Sidebar:
-    """Represents the sidebar panel in the Game of Life UI.
-
-    The sidebar occupies the right portion of the window and will contain
-    buttons, labels, and controls for simulation parameters. Currently, it
-    displays a placeholder area and title text.
-    """
+    """Displays controls and information beside the main grid."""
 
     def __init__(
         self,
@@ -41,10 +36,18 @@ class Sidebar:
         self.surface = surface
         self.rect = pygame.Rect(x, y, width, height)
 
+        # Define UI elemt positions
+        self.button_step = pygame.Rect(x+20, y+20, width -40, 40)
+
     def draw(self) -> None:
-        """Draw the sidebar background and placeholder text."""
+        """Render the sidebar UI elements."""
         pygame.draw.rect(self.surface, GRAY, self.rect)
-        # placeholder text
+        
+        # Step Button
+        pygame.draw.rect(self.surface, WHITE, self.button_step)
+        pygame.draw.rect(self.surface, BLACK, self.button_step, width=2)
+
         font = pygame.font.SysFont(None, 24)
-        text = font.render("Sidebar", 1, BLACK)
-        self.surface.blit(text, (self.rect.x + 10, self.rect.y + 10))
+        text = font.render("Step", 1, BLACK)
+        text_rect = text.get_rect(center=self.button_step.center)
+        self.surface.blit(text, text_rect)
