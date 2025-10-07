@@ -1,0 +1,9 @@
+"""Constants used across the Game of Life simulation."""
+
+TILE_SIZE = 20
+GRID_WIDTH = 40
+GRID_HEIGHT = 30
+WIDTH = GRID_WIDTH * TILE_SIZE
+HEIGHT = GRID_HEIGHT * TILE_SIZE
+SIDEBAR_WIDTH = 200
+FPS = 30

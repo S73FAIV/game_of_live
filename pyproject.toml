@@ -1,0 +1,57 @@
+[project]
+name = "gameoflive"
+version = "0.1.0"
+description = "Gameification of Conways Game of Live"
+authors = [
+    { name = "Stefan Willibald", email = "stefan.willibald@hm.edu" },
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "pygame (>=2.6.1,<3.0.0)",
+    "numpy (>=2.3.3,<3.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+ruff = "^0.13.3"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+lint.select = ["ALL"]
+lint.ignore = [
+    "COM812", # Conflicts with the formatter
+    "ISC001", # Conflicts with the formatter
+    "PT001",  # https://github.com/astral-sh/ruff/issues/8796#issuecomment-1825907715
+    "PT023",  # https://github.com/astral-sh/ruff/issues/8796#issuecomment-1825907715
+    "D211", # Docstring before class definition
+    "D213", # Multi-line docstring summary start
+    "D203", # One-blank-line-before-class
+]
+exclude = [
+    ".venv",
+    "venv",
+    "env",
+    "__pycache__",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "build",
+    "dist",
+    "docs/",
+    "Einarbeitung/",
+    "gitlab-runner/",
+]
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+preview = true
+quote-style = "double"
