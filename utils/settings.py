@@ -1,13 +1,21 @@
 """Constants used across the Game of Life simulation."""
 
-# Sizes
+# Cells
 TILE_SIZE = 20
+
+# Grid dimensions (in cells)
 GRID_WIDTH = 40
 GRID_HEIGHT = 30
-WIDTH = GRID_WIDTH * TILE_SIZE
-HEIGHT = GRID_HEIGHT * TILE_SIZE
+# Grid dimensions (in pixel)
+GRID_PIXEL_WIDTH = GRID_WIDTH * TILE_SIZE
+GRID_PIXEL_HEIGHT = GRID_HEIGHT * TILE_SIZE
+# Sidebar dimensions (in pixels)
 SIDEBAR_WIDTH = 200
+
+# Window dimensions
+TOTAL_WIDTH = GRID_PIXEL_WIDTH + SIDEBAR_WIDTH
+TOTAL_HEIGHT = GRID_PIXEL_HEIGHT
 
 # Game Speed
 FPS = 30
-STEP_INTERVAL = 0.8  # seconds per simulation step
+STEP_INTERVAL = 0.3  # seconds per simulation step

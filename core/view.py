@@ -9,7 +9,14 @@ import pygame
 from core.model import GameState
 from ui.colors import BLACK, LIGHTGRAY, WHITE
 from ui.sidebar import Sidebar
-from utils.settings import HEIGHT, SIDEBAR_WIDTH, TILE_SIZE, WIDTH
+from utils.settings import (
+    GRID_PIXEL_HEIGHT,
+    GRID_PIXEL_WIDTH,
+    SIDEBAR_WIDTH,
+    TILE_SIZE,
+    TOTAL_WIDTH,
+    TOTAL_HEIGHT
+)
 
 
 class GameView:
@@ -28,18 +35,20 @@ class GameView:
                 and simulation status.
         """
         self.state = state
-        self.screen = pygame.display.set_mode((WIDTH + SIDEBAR_WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((TOTAL_WIDTH, TOTAL_HEIGHT))
         pygame.display.set_caption("Conway's Game of Life")
 
-        self.sidebar = Sidebar(self.state, self.screen, WIDTH, 0, SIDEBAR_WIDTH, HEIGHT)
+        self.sidebar = Sidebar(self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT)
         self.state.subscribe(self.draw)
 
     def draw_grid(self) -> None:
         """Draw the grid lines separating individual cells."""
-        for x in range(0, WIDTH, TILE_SIZE):
-            pygame.draw.line(self.screen, LIGHTGRAY, (x, 0), (x, HEIGHT))
-        for y in range(0, HEIGHT, TILE_SIZE):
-            pygame.draw.line(self.screen, LIGHTGRAY, (0, y), (WIDTH, y))
+        # vertical lines
+        for x in range(0, GRID_PIXEL_WIDTH, TILE_SIZE):
+            pygame.draw.line(self.screen, LIGHTGRAY, (x, 0), (x, GRID_PIXEL_HEIGHT))
+        # horizontal lines
+        for y in range(0, GRID_PIXEL_WIDTH, TILE_SIZE):
+            pygame.draw.line(self.screen, LIGHTGRAY, (0, y), (GRID_PIXEL_WIDTH, y))
 
     def draw_cells(self) -> None:
         """Render all active (alive) cells as black squares."""

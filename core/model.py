@@ -12,7 +12,7 @@ from collections.abc import Callable
 
 import numpy as np
 
-from utils.settings import STEP_INTERVAL
+from utils.settings import STEP_INTERVAL, GRID_WIDTH, GRID_HEIGHT
 
 
 class GameState:
@@ -27,7 +27,7 @@ class GameState:
     running: bool
     last_update_time: float
 
-    def __init__(self, width: int = 50, height: int = 30) -> None:
+    def __init__(self, width: int = GRID_WIDTH, height: int = GRID_HEIGHT) -> None:
         """Initialize a new Game of Life model.
 
         Args:
@@ -52,8 +52,7 @@ class GameState:
             return  # not yet time for the next step
 
         self.last_update_time = now
-        grid_changed = self.step()
-        if not grid_changed:
+        if not self.step():
             print("Pausing run, as simulation has reached a stable state.")
             self.running = False
 
@@ -79,13 +78,13 @@ class GameState:
         Returns:
             bool: False if the step hasn't changed anything, True otherwise.
         """
+        old_grid = self.grid.copy()
         new_grid = self.compute_next_generation(self.grid)
 
         self.grid = new_grid
         self.notify()
-        if np.array_equal(new_grid, self.grid) or not new_grid.any():
-            return False  # returns False, if steps don't change anything
-        return True
+        changed = not np.array_equal(new_grid, old_grid)
+        return changed and bool(new_grid.any())
 
     def start(self) -> None:
         """Start automatic simulation."""

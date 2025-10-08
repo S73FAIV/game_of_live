@@ -8,7 +8,7 @@ import pygame
 
 from core.model import GameState
 from core.view import GameView
-from utils.settings import TILE_SIZE, WIDTH
+from utils.settings import TILE_SIZE, GRID_PIXEL_WIDTH
 
 
 class GameController:
@@ -49,7 +49,7 @@ class GameController:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x = event.pos[0]
-                if x < WIDTH:  # inside grid
+                if x < GRID_PIXEL_WIDTH:  # inside grid
                     self.handle_grid_interaction(event.pos)
                 else:  # inside the sidebar
                     self.handle_sidebarbuttons(event.pos)
