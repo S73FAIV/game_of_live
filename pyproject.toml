@@ -18,6 +18,7 @@ package-mode = false
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
 ruff = "^0.13.3"
+scipy = "^1.16.2"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

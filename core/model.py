@@ -13,7 +13,7 @@ from collections.abc import Callable
 import numpy as np
 
 from utils.settings import STEP_INTERVAL, GRID_WIDTH, GRID_HEIGHT
-
+from core.sound_manager import SoundManager
 
 class GameState:
     """Stores the state of the grid and controls simulation updates."""
@@ -26,6 +26,7 @@ class GameState:
     # for the simulation
     running: bool
     last_update_time: float
+    sound: SoundManager
 
     def __init__(self, width: int = GRID_WIDTH, height: int = GRID_HEIGHT) -> None:
         """Initialize a new Game of Life model.
@@ -34,11 +35,18 @@ class GameState:
             width: Number of cells horizontally.
             height: Number of cells vertically.
         """
+        # the size
         self.width = width
         self.height = height
+        # the grid
         self.grid = np.zeros((height, width), dtype=int)
+        # the simulation
         self.running = False
         self.last_update_time = time.time()
+        # sound
+        self.sound = SoundManager()
+        self.sound.play_music()
+        # model-controller-view
         self.subscribers = []
 
     # This function runs every tick
@@ -80,6 +88,16 @@ class GameState:
         """
         old_grid = self.grid.copy()
         new_grid = self.compute_next_generation(self.grid)
+
+        # Sound effects
+        # Identify births and deaths
+        births = (new_grid == 1) & (old_grid == 0)
+        deaths = (new_grid == 0) & (old_grid == 1)
+        # Randomly trigger sound effects for some cells
+        if births.any():
+            self.sound.play_birth()
+        if deaths.any():
+            self.sound.play_death()
 
         self.grid = new_grid
         self.notify()
