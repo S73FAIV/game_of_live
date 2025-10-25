@@ -25,10 +25,20 @@ class SoundManager:
         self.sfx_death = pygame.mixer.Sound(self.sfx_death_path)
 
         # Adjust default volumes
+        self.muted = False
         pygame.mixer.music.set_volume(0.25)  # background music
         self.sfx_birth.set_volume(0.5)
         self.sfx_death.set_volume(0.4)
 
+    def toggle_mute(self) -> None:
+        """Toggle global mute on/off."""
+        self.muted = not self.muted
+
+        # Set volumes based on mute state
+        if self.muted:
+            pygame.mixer.music.set_volume(0.0)
+        else:
+            pygame.mixer.music.set_volume(0.25)
 
     def play_music(self) -> None:
         """Start looping the background Lo-Fi track."""
@@ -41,11 +51,12 @@ class SoundManager:
 
     def _play_randomized(self, sound: pygame.mixer.SoundType) -> None:
         """Play a sound effect with slight randomization in volume."""
-        channel = sound.play()
-        if channel:
-            channel.set_volume(random.uniform(0.3, 0.6))
-        else:
-            print("No channels available")
+        if not self.muted:
+            channel = sound.play()
+            if channel:
+                channel.set_volume(random.uniform(0.3, 0.6))
+            else:
+                print("No channels available")
 
     def play_generation_batch(
         self, births: int, deaths: int, live_cells: int, total_cells: int

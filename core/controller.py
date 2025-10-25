@@ -78,4 +78,6 @@ class GameController:
                         self.state.pause()
                     case "step":
                         self.state.step()
+                    case "sound":
+                        self.state.sound.toggle_mute()
                 break
