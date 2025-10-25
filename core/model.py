@@ -8,18 +8,23 @@ and notifies subscribers (views) when the state changes.
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from utils.settings import STEP_INTERVAL, GRID_WIDTH, GRID_HEIGHT
 from core.sound_manager import SoundManager
+from utils.settings import GRID_HEIGHT, GRID_WIDTH, STEP_INTERVAL
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class GameState:
     """Stores the state of the grid and controls simulation updates."""
 
     width: int
     height: int
+    total_cells: int
     grid: np.ndarray
     subscribers: list[Callable[[], None]]
 
@@ -38,6 +43,7 @@ class GameState:
         # the size
         self.width = width
         self.height = height
+        self.total_cells = width * height
         # the grid
         self.grid = np.zeros((height, width), dtype=int)
         # the simulation
@@ -93,14 +99,18 @@ class GameState:
         # Identify births and deaths
         births = (new_grid == 1) & (old_grid == 0)
         deaths = (new_grid == 0) & (old_grid == 1)
-        # Randomly trigger sound effects for some cells
-        if births.any():
-            self.sound.play_birth()
-        if deaths.any():
-            self.sound.play_death()
+        n_births = np.sum(births)
+        n_deaths = np.sum(deaths)
+
+        live_cells = np.sum(self.grid)
+        # Trigger Sounds relative to GameState
+        self.sound.play_generation_batch(
+            n_births, n_deaths, live_cells, self.total_cells
+        )
 
         self.grid = new_grid
         self.notify()
+
         changed = not np.array_equal(new_grid, old_grid)
         return changed and bool(new_grid.any())
 
