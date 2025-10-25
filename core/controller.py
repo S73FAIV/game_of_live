@@ -8,7 +8,7 @@ import pygame
 
 from core.model import GameState
 from core.view import GameView
-from utils.settings import TILE_SIZE, GRID_PIXEL_WIDTH
+from utils.settings import GRID_PIXEL_WIDTH, TILE_SIZE
 
 
 class GameController:

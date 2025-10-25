@@ -14,8 +14,8 @@ from utils.settings import (
     GRID_PIXEL_WIDTH,
     SIDEBAR_WIDTH,
     TILE_SIZE,
+    TOTAL_HEIGHT,
     TOTAL_WIDTH,
-    TOTAL_HEIGHT
 )
 
 
@@ -38,7 +38,9 @@ class GameView:
         self.screen = pygame.display.set_mode((TOTAL_WIDTH, TOTAL_HEIGHT))
         pygame.display.set_caption("Conway's Game of Life")
 
-        self.sidebar = Sidebar(self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT)
+        self.sidebar = Sidebar(
+            self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT
+        )
         self.state.subscribe(self.draw)
 
     def draw_grid(self) -> None:
