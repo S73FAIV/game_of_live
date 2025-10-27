@@ -1,5 +1,12 @@
 # Conway´s Game of Live
 
+## Architecture:
+
+For the Main Components of the Game we use the **Model-Controller-View**-Pattern (MCV). Where the game_state captures the state of the game and simulates its automatic updates, the controller is the only one, that changes the game_state from externally and all other components, that rely on the game_state get their updates via a event_bus.
+
+The game_state is closely connected to a PatternAnalyzer, that will do all the logic for us to see, if a new achievement was triggered and emits events accrodingly to the bus.
+From there the Achievement- and Tutorial-Manager can interpret those events.
+
 ## Attributions:
 
 ### Pictures/Icons

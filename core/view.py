@@ -8,6 +8,7 @@ import pygame
 
 from core.model import GameState
 from ui.colors import BLACK, LIGHTGRAY, WHITE
+from ui.notification_manager import NotificationManager
 from ui.sidebar import Sidebar
 from utils.settings import (
     GRID_PIXEL_HEIGHT,
@@ -41,6 +42,7 @@ class GameView:
         self.sidebar = Sidebar(
             self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT
         )
+        self.notification_manager = NotificationManager(self.screen)
         self.state.subscribe(self.draw)
 
     def draw_grid(self) -> None:
@@ -68,4 +70,5 @@ class GameView:
         self.draw_grid()
         self.draw_cells()
         self.sidebar.draw()
+        self.notification_manager.draw()
         pygame.display.flip()

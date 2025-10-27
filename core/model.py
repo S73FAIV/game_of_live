@@ -12,7 +12,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from core.sound_manager import SoundManager
+from core.analysis.pattern_analyzer import PatternAnalyzer
+from core.services.sound_manager import SoundManager
 from utils.settings import GRID_HEIGHT, GRID_WIDTH, STEP_INTERVAL
 
 if TYPE_CHECKING:
@@ -31,6 +32,7 @@ class GameState:
     # for the simulation
     running: bool
     last_update_time: float
+    analyzer: PatternAnalyzer
     sound: SoundManager
 
     def __init__(self, width: int = GRID_WIDTH, height: int = GRID_HEIGHT) -> None:
@@ -54,6 +56,8 @@ class GameState:
         self.sound.play_music()
         # model-controller-view
         self.subscribers = []
+        # Analyze Patterns in Grid
+        self.analyzer = PatternAnalyzer()
 
     # This function runs every tick
     def update(self) -> None:
@@ -70,7 +74,7 @@ class GameState:
             print("Pausing run, as simulation has reached a stable state.")
             self.running = False
 
-        self.notify()
+        # self.notify()
 
     def subscribe(self, callback: Callable[[], None]) -> None:
         """Register a view callback to be called on state updates."""
@@ -109,6 +113,8 @@ class GameState:
         )
 
         self.grid = new_grid
+        # Analyze the current generation
+        self.analyzer.analyze(self.grid)
         self.notify()
 
         changed = not np.array_equal(new_grid, old_grid)
