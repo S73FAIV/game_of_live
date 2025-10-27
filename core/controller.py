@@ -80,4 +80,6 @@ class GameController:
                         self.state.step()
                     case "sound":
                         self.state.sound.toggle_mute()
+                    case "trash":
+                        self.state.clear_grid()
                 break

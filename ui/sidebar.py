@@ -42,7 +42,8 @@ class Sidebar:
             "start": pygame.Rect(x + 20, y + 50, width - 40, 40),
             "pause": pygame.Rect(x + 20, y + 100, width - 40, 40),
             "step": pygame.Rect(x + 20, y + 150, width - 40, 40),
-            "sound": pygame.Rect(x + SIDEBAR_WIDTH - 50, y + TOTAL_HEIGHT - 50, 32, 32) # lower right corner
+            "sound": pygame.Rect(x + SIDEBAR_WIDTH - 50, y + TOTAL_HEIGHT - 50, 32, 32), # lower right corner
+            "trash": pygame.Rect(x + SIDEBAR_WIDTH - 90, y + TOTAL_HEIGHT - 50, 32, 32) # lower right corner
         }
 
         self.sound_on_icon = pygame.image.load("assets/img/volume.png").convert_alpha()
@@ -50,6 +51,8 @@ class Sidebar:
         # scale icons to fit the button if necessary
         self.sound_on_icon = pygame.transform.smoothscale(self.sound_on_icon, (32, 32))
         self.sound_off_icon = pygame.transform.smoothscale(self.sound_off_icon, (32, 32))
+        # TODO: do trash icon
+        self.trash_icon = pygame.transform.smoothscale(self.sound_off_icon, (32, 32))
 
 
     def draw(self) -> None:
@@ -64,6 +67,8 @@ class Sidebar:
             if name == "sound":
                 icon = self.sound_off_icon if self.state.sound.muted else self.sound_on_icon
                 self.surface.blit(icon, rect)
+            elif name == "trash":
+                icon = self.trash_icon
             else:
                 self.surface.blit(
                     font.render(name.capitalize(), 1, BLACK),

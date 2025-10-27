@@ -128,6 +128,11 @@ class GameState:
         """Pause automatic simulation."""
         self.running = False
 
+    def clear_grid(self) -> None:
+        """Clear grid (kill all living cells)."""
+        self.grid = np.zeros((self.height, self.width), dtype=int)
+        self.notify()
+
     def compute_next_generation(self, current_generation: np.ndarray) -> np.ndarray:
         """Compute the next generation of Conway's Game of Life.
 
