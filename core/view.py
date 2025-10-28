@@ -6,7 +6,7 @@ and sidebar interface.
 
 import pygame
 
-from core.model import GameState
+from core.game_model import GameState
 from ui.colors import BLACK, LIGHTGRAY, WHITE
 from ui.notification_manager import NotificationManager
 from ui.sidebar import Sidebar

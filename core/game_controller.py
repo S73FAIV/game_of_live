@@ -6,7 +6,7 @@ game's model (`GameState`) and view (`GameView`) layers.
 
 import pygame
 
-from core.model import GameState
+from core.game_model import GameState
 from core.view import GameView
 from utils.settings import GRID_PIXEL_WIDTH, TILE_SIZE
 

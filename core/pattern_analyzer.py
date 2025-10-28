@@ -1,9 +1,8 @@
 """Analyzes the Game of Life grid for known structures."""
 
 import numpy as np
-
-from ..services.achievement_manager import AchievementManager
-from ..services.tutorial_manager import TutorialManager
+from services.achievement_manager import AchievementManager
+from services.tutorial_manager import TutorialManager
 
 
 class PatternAnalyzer:

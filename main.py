@@ -5,8 +5,8 @@ Initializes Pygame, creates the MVC components, and starts the main event loop.
 
 import pygame
 
-from core.controller import GameController
-from core.model import GameState
+from core.game_controller import GameController
+from core.game_model import GameState
 from core.view import GameView
 from utils.settings import FPS
 

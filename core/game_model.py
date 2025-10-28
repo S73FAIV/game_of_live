@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from core.analysis.pattern_analyzer import PatternAnalyzer
+from core.pattern_analyzer import PatternAnalyzer
 from core.services.sound_manager import SoundManager
 from utils.settings import GRID_HEIGHT, GRID_WIDTH, STEP_INTERVAL
 

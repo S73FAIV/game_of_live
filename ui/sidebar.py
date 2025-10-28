@@ -6,9 +6,9 @@ of the right-hand control panel within the Pygame window.
 
 import pygame
 
-from core.model import GameState
+from core.game_model import GameState
 from ui.colors import BLACK, GRAY, LIGHTGRAY
-from utils.settings import TOTAL_HEIGHT, TOTAL_WIDTH, SIDEBAR_WIDTH
+from utils.settings import SIDEBAR_WIDTH, TOTAL_HEIGHT, TOTAL_WIDTH
 
 
 class Sidebar:
