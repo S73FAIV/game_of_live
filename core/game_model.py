@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from core.pattern_analyzer import PatternAnalyzer
 from core.services.sound_manager import SoundManager
 from utils.settings import GRID_HEIGHT, GRID_WIDTH, STEP_INTERVAL
 
@@ -27,12 +26,13 @@ class GameState:
     height: int
     total_cells: int
     grid: np.ndarray
+    births: np.ndarray
+    deaths: np.ndarray
     subscribers: list[Callable[[], None]]
 
     # for the simulation
     running: bool
     last_update_time: float
-    analyzer: PatternAnalyzer
     sound: SoundManager
 
     def __init__(self, width: int = GRID_WIDTH, height: int = GRID_HEIGHT) -> None:
@@ -48,6 +48,8 @@ class GameState:
         self.total_cells = width * height
         # the grid
         self.grid = np.zeros((height, width), dtype=int)
+        self.births = np.zeros((height, width), dtype=int)
+        self.deaths = np.zeros((height, width), dtype=int)
         # the simulation
         self.running = False
         self.last_update_time = time.time()
@@ -56,8 +58,6 @@ class GameState:
         self.sound.play_music()
         # model-controller-view
         self.subscribers = []
-        # Analyze Patterns in Grid
-        self.analyzer = PatternAnalyzer()
 
     # This function runs every tick
     def update(self) -> None:
@@ -74,7 +74,6 @@ class GameState:
             print("Pausing run, as simulation has reached a stable state.")
             self.running = False
 
-        # self.notify()
 
     def subscribe(self, callback: Callable[[], None]) -> None:
         """Register a view callback to be called on state updates."""
@@ -87,7 +86,19 @@ class GameState:
 
     def toggle_cell(self, x: int, y: int) -> None:
         """Toggle a single cell's alive/dead state."""
+        old_grid = self.grid.copy()
+        # the actual update of the cell
         self.grid[y, x] = 1 - self.grid[y, x]
+
+        self.births = (self.grid == 1) & (old_grid == 0)
+        self.deaths = (self.grid == 0) & (old_grid == 1)
+        n_births = np.sum(self.births)
+        n_deaths = np.sum(self.deaths)
+        live_cells = np.sum(self.grid)
+        # Trigger Sounds relative to GameState
+        self.sound.play_generation_batch(
+            n_births, n_deaths, live_cells, self.total_cells
+        )
         self.notify()
 
     def step(self) -> bool:
@@ -101,10 +112,10 @@ class GameState:
 
         # Sound effects
         # Identify births and deaths
-        births = (new_grid == 1) & (old_grid == 0)
-        deaths = (new_grid == 0) & (old_grid == 1)
-        n_births = np.sum(births)
-        n_deaths = np.sum(deaths)
+        self.births = (new_grid == 1) & (old_grid == 0)
+        self.deaths = (new_grid == 0) & (old_grid == 1)
+        n_births = np.sum(self.births)
+        n_deaths = np.sum(self.deaths)
 
         live_cells = np.sum(self.grid)
         # Trigger Sounds relative to GameState
@@ -114,7 +125,6 @@ class GameState:
 
         self.grid = new_grid
         # Analyze the current generation
-        self.analyzer.analyze(self.grid)
         self.notify()
 
         changed = not np.array_equal(new_grid, old_grid)

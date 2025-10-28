@@ -7,6 +7,7 @@ import pygame
 
 from core.game_controller import GameController
 from core.game_model import GameState
+from core.meta_controller import MetaController
 from core.view import GameView
 from utils.settings import FPS
 
@@ -31,6 +32,7 @@ def main() -> None:
     state = GameState()
     view = GameView(state)
     controller = GameController(state, view)
+    meta = MetaController(state, view)
 
     clock = pygame.time.Clock()
     running = True
@@ -42,10 +44,13 @@ def main() -> None:
         # 2. Update game state (if simulation is running)
         state.update()
 
-        # 3. Render
+        # 3. Check Meta-Progression (Achievements, Tutorial, etc.)
+        meta.update()
+
+        # 4. Render
         view.draw()
 
-        # 4. Cap frame rate
+        # 5. Cap frame rate
         clock.tick(FPS)
 
     pygame.quit()
