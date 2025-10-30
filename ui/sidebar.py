@@ -39,8 +39,11 @@ class Sidebar:
 
         # Define UI elemet positions
         self.buttons = {
+            # TODO(sw): rename Button to "Run Evolution"
             "start": pygame.Rect(x + 20, y + 50, width - 40, 40),
+            # TODO(sw): rename Button to "Stop Evolution"
             "pause": pygame.Rect(x + 20, y + 100, width - 40, 40),
+            # TODO(sw): rename button to "Next Generation"
             "step": pygame.Rect(x + 20, y + 150, width - 40, 40),
             "sound": pygame.Rect(x + SIDEBAR_WIDTH - 50, y + TOTAL_HEIGHT - 50, 32, 32), # lower right corner
             "trash": pygame.Rect(x + SIDEBAR_WIDTH - 90, y + TOTAL_HEIGHT - 50, 32, 32) # lower right corner

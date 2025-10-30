@@ -18,3 +18,13 @@ From there the Achievement- and Tutorial-Manager can interpret those events.
 ### Music
 
 <a href="https://pixabay.com/music/pop-lofi-loop-hopeful-city-321581/" title="Pixabay Lofi Loop Hopeful City">Pixabay Lofi Loop Hopeful City</a>
+
+
+### Not yet integrated:
+
+<a href="https://www.flaticon.com/free-icons/verification" title="verification icons">Verification icons created by Google - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/check-circle" title="check circle icons">Check circle icons created by Google - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/fast-forward" title="fast forward icons">Fast forward icons created by Google - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Google - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/pause" title="pause icons">Pause icons created by Google - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/achievement" title="achievement icons">Achievement icons created by VectorPortal - Flaticon</a>
