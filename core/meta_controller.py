@@ -21,7 +21,7 @@ class MetaController:
         self.state.subscribe(self.update)
         self.view = view
         self.tutorial = TutorialManager(view)
-        self.rules = RuleManager(view)
+        self.rules = RuleManager(view, state.grid)
         self.achievements = AchievementManager(view)
         self.old_grid = self.state.grid.copy()
 
@@ -38,7 +38,8 @@ class MetaController:
         deaths = self.state.deaths.copy()
         # Tell the managers to check!
         if update_type == UpdateType.STEP:
-            self.rules.update(grid, births, deaths)
+            self.rules.update(grid)
             self.achievements.update(grid, births, deaths)
+            self.tutorial.update(grid, births, deaths, from_step=(update_type == UpdateType.STEP))
         elif update_type == UpdateType.CELL_TOGGLE:
-            self.tutorial.update(grid, births, deaths)
+            self.tutorial.update(grid, births, deaths, from_step=(update_type == UpdateType.STEP))
