@@ -13,6 +13,7 @@ From there the Achievement- and Tutorial-Manager can interpret those events.
 
 <a href="https://www.flaticon.com/free-icons/mute" title="mute icons">Mute icons created by Google - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/speaker" title="speaker icons">Speaker icons created by Google - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/tools-and-utensils" title="Tools and utensils icons">Tools and utensils icons created by Google - Flaticon</a>
 
 ### Music
 

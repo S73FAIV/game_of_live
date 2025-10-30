@@ -48,11 +48,11 @@ class Sidebar:
 
         self.sound_on_icon = pygame.image.load("assets/img/volume.png").convert_alpha()
         self.sound_off_icon = pygame.image.load("assets/img/mute.png").convert_alpha()
+        self.delete_icon = pygame.image.load("assets/img/delete.png").convert_alpha()
         # scale icons to fit the button if necessary
         self.sound_on_icon = pygame.transform.smoothscale(self.sound_on_icon, (32, 32))
         self.sound_off_icon = pygame.transform.smoothscale(self.sound_off_icon, (32, 32))
-        # TODO: do trash icon
-        self.trash_icon = pygame.transform.smoothscale(self.sound_off_icon, (32, 32))
+        self.trash_icon = pygame.transform.smoothscale(self.delete_icon, (32, 32))
 
 
     def draw(self) -> None:
@@ -69,6 +69,7 @@ class Sidebar:
                 self.surface.blit(icon, rect)
             elif name == "trash":
                 icon = self.trash_icon
+                self.surface.blit(icon, rect)
             else:
                 self.surface.blit(
                     font.render(name.capitalize(), 1, BLACK),
