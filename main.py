@@ -45,7 +45,7 @@ def main() -> None:
         state.update()
 
         # 3. Check Meta-Progression (Achievements, Tutorial, etc.)
-        meta.update()
+        # meta.update() -> moved as subscriber of state
 
         # 4. Render
         view.draw()

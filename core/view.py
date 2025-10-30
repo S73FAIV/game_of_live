@@ -6,7 +6,7 @@ and sidebar interface.
 
 import pygame
 
-from core.game_model import GameState
+from core.game_model import GameState, UpdateType
 from ui.colors import BLACK, LIGHTGRAY, WHITE
 from ui.notification_manager import NotificationManager
 from ui.sidebar import Sidebar
@@ -43,7 +43,7 @@ class GameView:
             self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT
         )
         self.notification_manager = NotificationManager(self.screen)
-        self.state.subscribe(self.draw)
+        self.state.subscribe(self.on_state_change)
 
     def draw_grid(self) -> None:
         """Draw the grid lines separating individual cells."""
@@ -72,3 +72,11 @@ class GameView:
         self.sidebar.draw()
         self.notification_manager.draw()
         pygame.display.flip()
+
+    def on_state_change(self, update_type: UpdateType) -> None:
+        """React to any state change by redrawing."""
+        if update_type in (UpdateType.STEP, UpdateType.CELL_TOGGLE, UpdateType.CLEAR):
+            self.draw()
+        else:
+            # fallback for future event types
+            self.draw()

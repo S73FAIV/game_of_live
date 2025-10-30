@@ -19,6 +19,17 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 
+from enum import Enum, auto
+
+
+class UpdateType(Enum):
+    """This Enum contains all update types, that are invoked by the observer pattern."""
+
+    STEP = auto()  # Simulation advanced by one generation
+    CELL_TOGGLE = auto()  # Manual user edit
+    CLEAR = auto()  # Grid cleared
+
+
 class GameState:
     """Stores the state of the grid and controls simulation updates."""
 
@@ -28,7 +39,7 @@ class GameState:
     grid: np.ndarray
     births: np.ndarray
     deaths: np.ndarray
-    subscribers: list[Callable[[], None]]
+    subscribers: list[Callable[[UpdateType], None]]
 
     # for the simulation
     running: bool
@@ -74,15 +85,14 @@ class GameState:
             print("Pausing run, as simulation has reached a stable state.")
             self.running = False
 
-
-    def subscribe(self, callback: Callable[[], None]) -> None:
+    def subscribe(self, callback: Callable[[UpdateType], None]) -> None:
         """Register a view callback to be called on state updates."""
         self.subscribers.append(callback)
 
-    def notify(self) -> None:
+    def notify(self, update_type: UpdateType) -> None:
         """Notify all subscribed views."""
         for cb in self.subscribers:
-            cb()
+            cb(update_type)
 
     def toggle_cell(self, x: int, y: int) -> None:
         """Toggle a single cell's alive/dead state."""
@@ -99,7 +109,7 @@ class GameState:
         self.sound.play_generation_batch(
             n_births, n_deaths, live_cells, self.total_cells
         )
-        self.notify()
+        self.notify(UpdateType.CELL_TOGGLE)
 
     def step(self) -> bool:
         """Advance the simulation by one generation.
@@ -125,7 +135,7 @@ class GameState:
 
         self.grid = new_grid
         # Analyze the current generation
-        self.notify()
+        self.notify(UpdateType.STEP)
 
         changed = not np.array_equal(new_grid, old_grid)
         return changed and bool(new_grid.any())
@@ -141,7 +151,7 @@ class GameState:
     def clear_grid(self) -> None:
         """Clear grid (kill all living cells)."""
         self.grid = np.zeros((self.height, self.width), dtype=int)
-        self.notify()
+        self.notify(UpdateType.CLEAR)
 
     def compute_next_generation(self, current_generation: np.ndarray) -> np.ndarray:
         """Compute the next generation of Conway's Game of Life.
