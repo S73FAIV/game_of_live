@@ -8,6 +8,7 @@ import pygame
 
 from core.game_model import GameState, UpdateType
 from ui.colors import BLACK, LIGHTGRAY, WHITE
+from ui.marker_manager import MarkerManager
 from ui.notification_manager import NotificationManager
 from ui.sidebar import Sidebar
 from utils.settings import (
@@ -43,6 +44,7 @@ class GameView:
             self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT
         )
         self.notification_manager = NotificationManager(self.screen)
+        self.marker_manager = MarkerManager(self.screen)
         self.state.subscribe(self.on_state_change)
 
     def draw_grid(self) -> None:
@@ -70,6 +72,7 @@ class GameView:
         self.draw_grid()
         self.draw_cells()
         self.sidebar.draw()
+        self.marker_manager.draw()
         self.notification_manager.draw()
         pygame.display.flip()
 
