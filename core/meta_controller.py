@@ -22,7 +22,7 @@ class MetaController:
         self.view = view
         self.rules = RuleManager(view)
         self.achievements = AchievementManager(view)
-        self.tutorial = TutorialManager(view, self.rules, self.achievements)
+        self.tutorial = TutorialManager(view)
         self.old_grid = self.state.grid.copy()
 
     def update(self, update_type: UpdateType) -> None:
@@ -40,11 +40,19 @@ class MetaController:
             self.rules.update(grid, self.old_grid)
             self.achievements.update(grid, births, deaths)
             self.tutorial.update(
-                grid, births, deaths, from_step=(update_type == UpdateType.STEP)
+                grid,
+                births,
+                deaths,
+                from_step=(update_type == UpdateType.STEP),
+                old_grid=self.old_grid,
             )
         elif update_type == UpdateType.CELL_TOGGLE:
             self.tutorial.update(
-                grid, births, deaths, from_step=(update_type == UpdateType.STEP)
+                grid,
+                births,
+                deaths,
+                from_step=(update_type == UpdateType.STEP),
+                old_grid=self.old_grid,
             )
 
         # remember the grid

@@ -2,126 +2,123 @@
 
 import numpy as np
 
-from core.services.achievement_manager import AchievementManager
-from core.services.rule_manager import RuleManager
 from core.view import GameView
 
 
 class TutorialManager:
     """Handles reactive tutorial messages based on player actions and simulation steps."""
 
-    def __init__(
-        self, view: GameView, rules: RuleManager, achievements: AchievementManager
-    ) -> None:
+    def __init__(self, view: GameView) -> None:
         self.view = view
-        self.rules = rules
-        self.achievements = achievements
         self.stage = 0
         self.marker_pos: tuple[int, int] | None = None
         self.active = True
-        self.triggered_messages: set[str] = set()
+        self.shown_messages: set[str] = set()
+        self.highest_triggered_rank = -1
 
     def update(
-        self, grid: np.ndarray, births: np.ndarray, deaths: np.ndarray, from_step: bool
+        self,
+        grid: np.ndarray,
+        births: np.ndarray,
+        deaths: np.ndarray,
+        from_step: bool,
+        old_grid: np.ndarray | None = None,
     ) -> None:
         """React to player actions and simulation steps."""
         if not self.active:
             return
 
-        live_cells = np.sum(grid)
-        n_births = births.sum()
-        n_deaths = deaths.sum()
+        live_cells = int(np.sum(grid))
+        n_births = int(np.sum(births))
+        n_deaths = int(np.sum(deaths))
 
-        # Stage 0: first cell placement
+        # --- FIRST INTERACTION ---
         if self.stage == 0 and not from_step and n_births > 0:
-            self.stage = 1
             self._on_first_cell_created(births)
+            self.stage = 1
             return
 
-        # Stage 1: after first placement, handle simulation steps
-        if self.stage == 1 and from_step:
-            # Hierarchical checks in descending priority
+        # --- SECOND INTERACTION ---
+        if self.stage == 1 and from_step and old_grid is not None:
+            # Evaluate results based on previously recorded state
+            initial = int(np.sum(old_grid))
 
-            # Case: 3 cells, blinker discovered
-            if (
-                "blinker" in self.achievements.unlocked
-                and "blinker_tutorial" not in self.triggered_messages
-            ):
-                self.triggered_messages.add("blinker_tutorial")
-                msg = "Wow! It seems to be stable! Congratulation! You created a stable world!"
-                if not self.view.state.running:
-                    msg += " This one will survive on its own after starting the evolution!"
-                self.view.notification_manager.push(msg)
-                self.stage = 2
-                return
+            # Hierarchical message table: (rank, condition, key, message)
+            cases = [
+                (
+                    0,
+                    initial == 1 and live_cells == 0,
+                    "one_dying_cell",
+                    "It seems a single cell can't survive alone.",
+                ),
+                (
+                    1,
+                    initial == 2 and live_cells == 0,
+                    "two_dying_cells",
+                    "Maybe it needs more cells in its neighbourhood!?",
+                ),
+                (
+                    2,
+                    initial == 3 and live_cells == 0,
+                    "three_dying_cells",
+                    "What do you think happens when you put them all as close together as possible?",
+                ),
+                (
+                    3,
+                    initial == 3 and live_cells == 1,
+                    "three_with_survivor",
+                    "Amazing! It seems one of them survived! How about we just add more cells?!",
+                ),
+                (
+                    4,
+                    initial == 3
+                    and n_births == 2
+                    and n_deaths == 2
+                    and live_cells == 3,
+                    "blinker",
+                    "Wow! It seems to be stable! Congratulation! You created a stable world! "
+                    "This one will survive on its own after starting the evolution!",
+                ),
+            ]
 
-            # Case: 3 cells, at least one survives (triggers survival rule)
-            if (
-                n_births == 3
-                and "Survival" in self.rules.unlocked
-                and "three_cells_survive" not in self.triggered_messages
-            ):
-                self.triggered_messages.add("three_cells_survive")
-                self.view.notification_manager.push(
-                    "Amazing! What do you think if we add even MORE cells?"
-                )
-                self.stage = 2
-                return
-
-            # Case: 3 cells, all die
-            if (
-                n_births == 3
-                and n_deaths == 3
-                and "three_cells_die" not in self.triggered_messages
-            ):
-                self.triggered_messages.add("three_cells_die")
-                self.view.notification_manager.push(
-                    "What do you think happens when you put them all as close together as possible?"
-                )
-                self.stage = 2
-                return
-
-            # Case: 2 cells placed
-            if n_births == 2 and "two_cells" not in self.triggered_messages:
-                self.triggered_messages.add("two_cells")
-                self.view.notification_manager.push(
-                    "Maybe it needs more cells in its neighbourhood?!"
-                )
-                self.stage = 2
-                return
-
-            # Case: single cell died (underpopulation)
-            if (
-                n_births == 1
-                and "Underpopulation" in self.rules.unlocked
-                and "single_cell" not in self.triggered_messages
-            ):
-                self.triggered_messages.add("single_cell")
-                self.view.notification_manager.push(
-                    "It seems a single cell can't survive alone."
-                )
-                self.stage = 2
-                return
+            for rank, condition, key, message in cases:
+                if (
+                    condition
+                    and key not in self.shown_messages
+                    and rank > self.highest_triggered_rank
+                ):
+                    self._say(message, key, rank)
+                    break  # only one message per frame
 
     def _on_first_cell_created(self, births: np.ndarray) -> None:
         """Triggered when the first cell is manually placed."""
-        # locate first new live cell
         y, x = np.argwhere(births)[0]
         self.marker_pos = (int(x), int(y))
+        self.initial_live_count = 1
 
-        # Tell view to create marker (big exclamation mark)
+        # Create exclamation marker
         self.view.marker_manager.create_marker(self.marker_pos, symbol="!")
 
-        # Show first tutorial message
+        # Display tutorial intro message
         self.view.notification_manager.push(
-            "Wow, you have created life in this desolate place! "
-            "Do you think it survives until the next Generation?"
+            "Wow! You have created life in this desolate place! "
+            "Do you think it survives until the next generation?"
         )
 
-        print("Tutorial: Stage 1 triggered — first cell created.")
+        print("Tutorial: First cell created — Stage 1 active.")
+
+    def _say(self, message: str, key: str, rank: int) -> None:
+        """Display a tutorial message and update progression."""
+        self.view.notification_manager.push(message)
+        self.shown_messages.add(key)
+        self.highest_triggered_rank = max(self.highest_triggered_rank, rank)
+        print(f"Tutorial triggered ({key}) → rank {rank}")
 
     def reset(self) -> None:
-        """Reset tutorial for testing or restart."""
+        """Reset tutorial state."""
         self.stage = 0
         self.marker_pos = None
         self.active = True
+        self.initial_live_count = 0
+        self.shown_messages.clear()
+        self.highest_triggered_rank = -1
