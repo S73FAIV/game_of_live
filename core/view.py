@@ -49,12 +49,22 @@ class GameView:
 
     def draw_grid(self) -> None:
         """Draw the grid lines separating individual cells."""
-        # vertical lines
-        for x in range(0, GRID_PIXEL_WIDTH, TILE_SIZE):
-            pygame.draw.line(self.screen, LIGHTGRAY, (x, 0), (x, GRID_PIXEL_HEIGHT))
-        # horizontal lines
-        for y in range(0, GRID_PIXEL_WIDTH, TILE_SIZE):
-            pygame.draw.line(self.screen, LIGHTGRAY, (0, y), (GRID_PIXEL_WIDTH, y))
+        line_color = LIGHTGRAY
+        line_width = 2
+        for x in range(0, GRID_PIXEL_WIDTH + 1, TILE_SIZE):
+            pygame.draw.line(
+                self.screen, line_color, (x, 0), (x, GRID_PIXEL_HEIGHT), line_width
+            )
+        for y in range(0, GRID_PIXEL_HEIGHT + 1, TILE_SIZE):
+            pygame.draw.line(
+                self.screen, line_color, (0, y), (GRID_PIXEL_WIDTH, y), line_width
+            )
+        pygame.draw.rect(
+            self.screen,
+            BLACK,
+            pygame.Rect(0, 0, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT),
+            3,
+        )
 
     def draw_cells(self) -> None:
         """Render all active (alive) cells as black squares."""
@@ -65,6 +75,7 @@ class GameView:
                         x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE
                     )
                     pygame.draw.rect(self.screen, BLACK, rect)
+                    pygame.draw.rect(self.screen, WHITE, rect, 1)  # thin white border
 
     def draw(self) -> None:
         """Render the full scene: background, grid, cells, and sidebar."""

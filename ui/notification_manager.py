@@ -21,6 +21,7 @@ class Notification:
         text: str,
         ntype: str = NotificationType.TUTORIAL,
         duration: float = 3.0,
+        icon_sprite: pygame.Surface | None = None
     ) -> None:
         self.text = text
         self.ntype = ntype
@@ -33,18 +34,58 @@ class Notification:
         self.shadow_color = (0, 0, 0)
         self.accent_color = (255, 255, 255)
         self.position = "bottom-right"
+        self.icon_surface: pygame.Surface | None = None
+        self.icon_tint = (0, 0, 0)
 
-        # type-specific visual parameters
-        match ntype:
+        self._init_visuals(icon_sprite)
+
+    def _init_visuals(self, icon_sprite: pygame.Surface | None) -> None:
+        """Assign visual attributes based on type."""
+        icon_size = (24, 24)
+
+        match self.ntype:
             case NotificationType.TUTORIAL:
-                self.accent_color = (255, 235, 150)  # warm yellow
                 self.position = "top-center"
+                self.icon_tint = (255, 235, 150)  # yellow tint
+                if icon_sprite:
+                    # user-supplied sprite for tutorial (e.g. character)
+                    self.icon_surface = pygame.transform.smoothscale(
+                        icon_sprite, icon_size
+                    )
+                else:
+                    # default speech-bubble icon
+                    self.icon_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
+                    pygame.draw.rect(self.icon_surface, self.icon_tint, (4, 4, 16, 14))
+                    pygame.draw.polygon(
+                        self.icon_surface, self.icon_tint, [(6, 18), (10, 14), (14, 18)]
+                    )
+
             case NotificationType.ACHIEVEMENT:
                 self.position = "bottom-right"
-                self.accent_color = (180, 255, 180)  # soft green
+                self.icon_tint = (120, 200, 120)  # green tint
+                self.icon_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
+                pygame.draw.circle(
+                    self.icon_surface, self.icon_tint, (12, 12), 10, width=0
+                )
+                pygame.draw.circle(
+                    self.icon_surface, BLACK, (12, 12), 10, width=2
+                )
+                pygame.draw.line(
+                    self.icon_surface, BLACK, (8, 12), (11, 15), 2
+                )
+                pygame.draw.line(
+                    self.icon_surface, BLACK, (11, 15), (16, 8), 2
+                )
+
             case NotificationType.RULE:
                 self.position = "bottom-right"
-                self.accent_color = (180, 200, 255)  # cool blue
+                self.icon_tint = (120, 160, 230)  # blue tint
+                self.icon_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
+                pygame.draw.rect(self.icon_surface, self.icon_tint, (4, 4, 16, 16))
+                pygame.draw.rect(self.icon_surface, BLACK, (4, 4, 16, 16), width=2)
+                pygame.draw.line(
+                    self.icon_surface, BLACK, (4, 4), (20, 20), 2
+                )
 
     @property
     def expired(self) -> bool:
@@ -64,9 +105,10 @@ class NotificationManager:
         text: str,
         ntype: str = NotificationType.TUTORIAL,
         duration: float = 3.0,
+        icon_sprite: pygame.Surface | None = None,
     ) -> None:
         """Add a new notification to the queue."""
-        self.active_notifications.append(Notification(text, ntype, duration))
+        self.active_notifications.append(Notification(text, ntype, duration, icon_sprite))
 
     def draw(self) -> None:
         """Render and manage fading notifications on screen."""
@@ -113,28 +155,24 @@ class NotificationManager:
                 alpha = int(255 * ((notification.duration - age) / 0.5))
             alpha = max(alpha, 0)
 
+            # text surface
             text_surface = self.font.render(
                 notification.text, True, notification.text_color
             )
             text_surface.set_alpha(alpha)
 
-            # background dimensions
-            bg_w = text_surface.get_width() + 40
+            # compute background size with icon spacing
+            icon_w = 0
+            if notification.icon_surface:
+                icon_w = notification.icon_surface.get_width() + 16
+            bg_w = text_surface.get_width() + icon_w + 40
             bg_h = text_surface.get_height() + 20
-            # surfaces
+
+            # base + shadow
             bg_surface = pygame.Surface((bg_w, bg_h))
             bg_surface.fill(notification.bg_color)
             pygame.draw.rect(bg_surface, notification.border_color, bg_surface.get_rect(), 3)
 
-            # accent strip at top
-            accent_height = 6
-            pygame.draw.rect(
-                bg_surface,
-                notification.accent_color,
-                pygame.Rect(0, 0, bg_w, accent_height),
-            )
-
-            # shadow surface (solid, offset)
             shadow_offset = 5
             shadow = pygame.Surface((bg_w, bg_h))
             shadow.fill(notification.shadow_color)
@@ -156,9 +194,13 @@ class NotificationManager:
                 y_offset -= bg_surface.get_height() + 10
                 y = y_offset
 
-            # blit shadow first
+                        # blit
             self.screen.blit(shadow, (x + shadow_offset, y + shadow_offset))
-            # then main notification
             self.screen.blit(bg_surface, (x, y))
-            # then text
-            self.screen.blit(text_surface, (x + 20, y + 8))
+            if notification.icon_surface:
+                icon = notification.icon_surface.copy()
+                icon.set_alpha(alpha)
+                self.screen.blit(icon, (x + 12, y + (bg_h - icon.get_height()) // 2))
+                self.screen.blit(text_surface, (x + 12 + icon_w, y + 8))
+            else:
+                self.screen.blit(text_surface, (x + 20, y + 8))
