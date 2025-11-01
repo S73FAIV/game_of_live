@@ -47,12 +47,16 @@ class GameController:
             if event.type == pygame.QUIT:
                 return False
 
+            # Delegate to sidebar
+            sidebar_action = self.view.sidebar.handle_event(event)
+            if sidebar_action:
+                self.handle_sidebar_action(sidebar_action)
+                continue
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x = event.pos[0]
                 if x < GRID_PIXEL_WIDTH:  # inside grid
                     self.handle_grid_interaction(event.pos)
-                else:  # inside the sidebar
-                    self.handle_sidebarbuttons(event.pos)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -67,19 +71,16 @@ class GameController:
         grid_y = y // TILE_SIZE
         self.state.toggle_cell(grid_x, grid_y)
 
-    def handle_sidebarbuttons(self, pos: tuple[int, int]) -> None:
-        """Check if any sidebar button was clicked and act accordingly."""
-        for name, rect in self.view.sidebar.buttons.items():
-            if rect.collidepoint(pos):
-                match name:
-                    case "start":
-                        self.state.start()
-                    case "pause":
-                        self.state.pause()
-                    case "step":
-                        self.state.step()
-                    case "sound":
-                        self.state.sound.toggle_mute()
-                    case "trash":
-                        self.state.clear_grid()
-                break
+    def handle_sidebar_action(self, action: str) -> None:
+        """Perform logical actions based on sidebar button name."""
+        match action:
+            case "start":
+                self.state.start()
+            case "pause":
+                self.state.pause()
+            case "step":
+                self.state.step()
+            case "sound":
+                self.state.sound.toggle_mute()
+            case "trash":
+                self.state.clear_grid()

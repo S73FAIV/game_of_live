@@ -1,10 +1,9 @@
 """Handles unlocking and tracking of achievements."""
 
 import numpy as np
-from scipy.signal import convolve2d  # for efficient pattern matching
 
 from core.view import GameView
-
+from ui.notification_manager import NotificationType
 
 
 class AchievementManager:
@@ -61,5 +60,5 @@ class AchievementManager:
     def _unlock(self, key: str, message: str) -> None:
         """Record achievement and show notification."""
         self.unlocked.add(key)
-        self.view.notification_manager.push(message)
+        self.view.notification_manager.push(message, NotificationType.ACHIEVEMENT)
         print(message)

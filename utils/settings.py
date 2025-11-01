@@ -1,7 +1,7 @@
 """Constants used across the Game of Life simulation."""
 
 # Cells
-TILE_SIZE = 20
+TILE_SIZE = 25
 
 # Grid dimensions (in cells)
 GRID_WIDTH = 40

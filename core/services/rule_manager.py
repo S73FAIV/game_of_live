@@ -3,6 +3,7 @@
 import numpy as np
 
 from core.view import GameView
+from ui.notification_manager import NotificationType
 from utils.settings import GRID_HEIGHT, GRID_WIDTH
 
 
@@ -30,29 +31,29 @@ class RuleManager:
         births = (~was_alive) & is_alive
         deaths = was_alive & (~is_alive)
 
-        # Rule 1 – Underpopulation: alive → dead, < 2 neighbors
+        # Rule 1 - Underpopulation: alive → dead, < 2 neighbors
         if np.any(deaths & (neighbors < 2)) and "Underpopulation" not in self.unlocked:
             self._unlock("Underpopulation", "A lonely cell has died from isolation.")
 
-        # Rule 2 – Survival: alive → alive, 2 or 3 neighbors
+        # Rule 2 - Survival: alive → alive, 2 or 3 neighbors
         if (
             np.any(is_alive & was_alive & ((neighbors == 2) | (neighbors == 3)))
             and "Survival" not in self.unlocked
         ):
             self._unlock("Survival", "Some cells have stabilized and survived.")
 
-        # Rule 3 – Overpopulation: alive → dead, > 3 neighbors
+        # Rule 3 - Overpopulation: alive → dead, > 3 neighbors
         if np.any(deaths & (neighbors > 3)) and "Overpopulation" not in self.unlocked:
             self._unlock(
                 "Overpopulation", "A crowded area has collapsed from overpopulation."
             )
 
-        # Rule 4 – Reproduction: dead → alive, exactly 3 neighbors
+        # Rule 4 - Reproduction: dead → alive, exactly 3 neighbors
         if np.any(births & (neighbors == 3)) and "Reproduction" not in self.unlocked:
             self._unlock("Reproduction", "New life has emerged from perfect balance.")
 
     def _unlock(self, key: str, message: str) -> None:
         """Mark rule as unlocked and notify."""
         self.unlocked.add(key)
-        self.view.notification_manager.push(message)
+        self.view.notification_manager.push(message, NotificationType.RULE)
         print(message)

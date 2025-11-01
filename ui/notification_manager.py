@@ -2,14 +2,49 @@ import time
 
 import pygame
 
-from ui.colors import BLACK, WHITE
+from ui.colors import BLACK, WHITE, GRAY, LIGHTGRAY
+
+
+class NotificationType:
+    """Defines available notification categories."""
+
+    TUTORIAL = "tutorial"
+    ACHIEVEMENT = "achievement"
+    RULE = "rule"
 
 
 class Notification:
-    def __init__(self, text: str, duration: float = 3.0):
+    """Represents a self-contained notification with type-specific styling."""
+
+    def __init__(
+        self,
+        text: str,
+        ntype: str = NotificationType.TUTORIAL,
+        duration: float = 3.0,
+    ) -> None:
         self.text = text
+        self.ntype = ntype
         self.start_time = time.time()
         self.duration = duration
+
+        self.bg_color = WHITE
+        self.text_color = BLACK
+        self.border_color = BLACK
+        self.shadow_color = (0, 0, 0)
+        self.accent_color = (255, 255, 255)
+        self.position = "bottom-right"
+
+        # type-specific visual parameters
+        match ntype:
+            case NotificationType.TUTORIAL:
+                self.accent_color = (255, 235, 150)  # warm yellow
+                self.position = "top-center"
+            case NotificationType.ACHIEVEMENT:
+                self.position = "bottom-right"
+                self.accent_color = (180, 255, 180)  # soft green
+            case NotificationType.RULE:
+                self.position = "bottom-right"
+                self.accent_color = (180, 200, 255)  # cool blue
 
     @property
     def expired(self) -> bool:
@@ -17,19 +52,24 @@ class Notification:
 
 
 class NotificationManager:
-    """Handles short-lived on-screen notifications."""
+    """Handles creation, rendering, and lifecycle of all active notifications."""
 
-    def __init__(self, screen: pygame.Surface):
+    def __init__(self, screen: pygame.Surface) -> None:
         self.screen = screen
         self.font = pygame.font.SysFont("arial", 18)
         self.active_notifications: list[Notification] = []
 
-    def push(self, text: str, duration: float = 3.0) -> None:
-        """Add a new notification to be displayed."""
-        self.active_notifications.append(Notification(text, duration))
+    def push(
+        self,
+        text: str,
+        ntype: str = NotificationType.TUTORIAL,
+        duration: float = 3.0,
+    ) -> None:
+        """Add a new notification to the queue."""
+        self.active_notifications.append(Notification(text, ntype, duration))
 
     def draw(self) -> None:
-        """Render active notifications with fading and stacking."""
+        """Render and manage fading notifications on screen."""
         now = time.time()
         self.active_notifications = [
             n for n in self.active_notifications if not n.expired
@@ -37,24 +77,88 @@ class NotificationManager:
         if not self.active_notifications:
             return
 
-        # Bottom-right stacking
-        y_offset = self.screen.get_height() - 40
-        for notification in reversed(self.active_notifications):
+        # group notifications by position for layout stacking
+        positions = {
+            "top-left": [],
+            "top-center": [],
+            "top-right": [],
+            "bottom-left": [],
+            "bottom-right": [],
+        }
+        for n in self.active_notifications:
+            positions[n.position].append(n)
+
+        for pos, group in positions.items():
+            if not group:
+                continue
+            self._draw_group(group, pos, now)
+
+    def _draw_group(self, group: list[Notification], pos: str, now: float) -> None:
+        """Render a stacked group of notifications for a given corner."""
+        # determine stacking origin
+        padding = 10
+        screen_w, screen_h = self.screen.get_width(), self.screen.get_height()
+
+        if "top" in pos:
+            y_offset = padding
+            y_dir = 1
+        else:
+            y_offset = screen_h - padding
+            y_dir = -1
+
+        for notification in reversed(group):
             age = now - notification.start_time
             alpha = 255
             if notification.duration - age < 0.5:
                 alpha = int(255 * ((notification.duration - age) / 0.5))
             alpha = max(alpha, 0)
 
-            text_surface = self.font.render(notification.text, True, WHITE)
-            text_surface.set_alpha(alpha)
-            bg_surface = pygame.Surface(
-                (text_surface.get_width() + 20, text_surface.get_height() + 10)
+            text_surface = self.font.render(
+                notification.text, True, notification.text_color
             )
-            bg_surface.fill(BLACK)
-            bg_surface.set_alpha(int(alpha * 0.6))
+            text_surface.set_alpha(alpha)
 
-            x = self.screen.get_width() - bg_surface.get_width() - 20
-            self.screen.blit(bg_surface, (x, y_offset))
-            self.screen.blit(text_surface, (x + 10, y_offset + 5))
-            y_offset -= bg_surface.get_height() + 10
+            # background dimensions
+            bg_w = text_surface.get_width() + 40
+            bg_h = text_surface.get_height() + 20
+            # surfaces
+            bg_surface = pygame.Surface((bg_w, bg_h))
+            bg_surface.fill(notification.bg_color)
+            pygame.draw.rect(bg_surface, notification.border_color, bg_surface.get_rect(), 3)
+
+            # accent strip at top
+            accent_height = 6
+            pygame.draw.rect(
+                bg_surface,
+                notification.accent_color,
+                pygame.Rect(0, 0, bg_w, accent_height),
+            )
+
+            # shadow surface (solid, offset)
+            shadow_offset = 5
+            shadow = pygame.Surface((bg_w, bg_h))
+            shadow.fill(notification.shadow_color)
+            shadow.set_alpha(int(alpha * 0.3))
+
+            # compute x position
+            if "left" in pos:
+                x = 20
+            elif "center" in pos:
+                x = (screen_w - bg_surface.get_width()) // 2
+            else:
+                x = screen_w - bg_surface.get_width() - 20
+
+            # compute y position (stack vertically)
+            if "top" in pos:
+                y = y_offset
+                y_offset += bg_surface.get_height() + 10
+            else:
+                y_offset -= bg_surface.get_height() + 10
+                y = y_offset
+
+            # blit shadow first
+            self.screen.blit(shadow, (x + shadow_offset, y + shadow_offset))
+            # then main notification
+            self.screen.blit(bg_surface, (x, y))
+            # then text
+            self.screen.blit(text_surface, (x + 20, y + 8))

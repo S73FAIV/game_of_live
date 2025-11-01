@@ -3,7 +3,7 @@
 import numpy as np
 
 from core.view import GameView
-
+from ui.notification_manager import NotificationType
 
 class TutorialManager:
     """Handles reactive tutorial messages based on player actions and simulation steps."""
@@ -76,7 +76,7 @@ class TutorialManager:
                     and n_deaths == 2
                     and live_cells == 3,
                     "blinker",
-                    "Wow! It seems to be stable! Congratulation! You created a stable world! "
+                    "Wow! It seems to be stable! Congratulation! You created a stable world! \n"
                     "This one will survive on its own after starting the evolution!",
                 ),
             ]
@@ -109,7 +109,7 @@ class TutorialManager:
 
     def _say(self, message: str, key: str, rank: int) -> None:
         """Display a tutorial message and update progression."""
-        self.view.notification_manager.push(message)
+        self.view.notification_manager.push(message, NotificationType.TUTORIAL, 6)
         self.shown_messages.add(key)
         self.highest_triggered_rank = max(self.highest_triggered_rank, rank)
         print(f"Tutorial triggered ({key}) → rank {rank}")
