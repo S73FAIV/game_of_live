@@ -1,6 +1,7 @@
 """Handles unlocking and tracking of achievements."""
 
 import numpy as np
+import pygame
 
 from core.services.notification_service import NotificationService
 from ui.notification_manager import NotificationType
@@ -12,6 +13,9 @@ class AchievementManager:
     def __init__(self, notifier: NotificationService) -> None:
         self.unlocked: set[str] = set()
         self.notify = notifier
+
+        self.icon_sprite = pygame.image.load("assets/img/band.png").convert_alpha()
+        self.icon_sprite = pygame.transform.smoothscale(self.icon_sprite, (32, 32))
 
         # Define reference patterns (1 = live cell, 0 = dead)
         self.patterns = {
@@ -60,5 +64,5 @@ class AchievementManager:
     def _unlock(self, key: str, message: str) -> None:
         """Record achievement and show notification."""
         self.unlocked.add(key)
-        self.notify(NotificationType.ACHIEVEMENT, message, 6)
+        self.notify(NotificationType.ACHIEVEMENT, message, 6, self.icon_sprite)
         print(message)

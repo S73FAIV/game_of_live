@@ -1,6 +1,7 @@
 """Guides the player through the first steps of Conway's Game of Life."""
 
 import numpy as np
+import pygame
 
 from core.services.notification_service import NotificationService
 from ui.notification_manager import NotificationType
@@ -16,6 +17,8 @@ class TutorialManager:
         self.active = True
         self.shown_messages: set[str] = set()
         self.highest_triggered_rank = -1
+        self.icon_sprite = pygame.image.load("assets/img/checked.png").convert_alpha()
+        self.icon_sprite = pygame.transform.smoothscale(self.icon_sprite, (32, 32))
 
     def update(
         self,
@@ -110,7 +113,7 @@ class TutorialManager:
 
     def _say(self, message: str, key: str, rank: int) -> None:
         """Display a tutorial message and update progression."""
-        self.notify(NotificationType.TUTORIAL, message, 6)
+        self.notify(NotificationType.TUTORIAL, message, 6, self.icon_sprite)
         self.shown_messages.add(key)
         self.highest_triggered_rank = max(self.highest_triggered_rank, rank)
         print(f"Tutorial triggered ({key}) → rank {rank}")

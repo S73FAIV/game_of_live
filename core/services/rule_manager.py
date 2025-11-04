@@ -1,6 +1,7 @@
 """Handles unlocking and tracking of Conway's Game of Life rules."""
 
 import numpy as np
+import pygame
 
 from core.services.notification_service import NotificationService
 from ui.notification_manager import NotificationType
@@ -11,6 +12,8 @@ class RuleManager:
 
     def __init__(self, notifier: NotificationService) -> None:
         self.unlocked: set[str] = set()
+        self.icon_sprite = pygame.image.load("assets/img/clipboard.png").convert_alpha()
+        self.icon_sprite = pygame.transform.smoothscale(self.icon_sprite, (32, 32))
         self.notify = notifier
 
     def update(self, new_grid: np.ndarray, old_grid: np.ndarray) -> None:
@@ -54,5 +57,5 @@ class RuleManager:
     def _unlock(self, key: str, message: str) -> None:
         """Mark rule as unlocked and notify."""
         self.unlocked.add(key)
-        self.notify(NotificationType.RULE, message, 3)
+        self.notify(NotificationType.RULE, message, 3, self.icon_sprite)
         print(message)

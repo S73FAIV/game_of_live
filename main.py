@@ -34,8 +34,13 @@ def main() -> None:
     view = GameView(state)
 
     # Implementation of NotificationService interface
-    def notifier(ntype: NotificationType, message: str, duration: float=3.0) -> None:
-        view.notification_manager.push(message, ntype, duration)
+    def notifier(
+        ntype: NotificationType,
+        message: str,
+        duration: float = 3.0,
+        item_sprite: pygame.SurfaceType|None = None,
+    ) -> None:
+        view.notification_manager.push(message, ntype, duration, item_sprite)
 
     meta = MetaController(state, notifier)
     # create access to the meta-data for the view

@@ -2,6 +2,8 @@
 
 from typing import Protocol
 
+import pygame
+
 from ui.notification_manager import NotificationType
 
 
@@ -13,6 +15,7 @@ class NotificationService(Protocol):
         ntype: NotificationType,
         message: str,
         duration: float = 3.0,
+        item_sprite: pygame.Surface|None = None
     ) -> None:
         """Display a notification message of a given type.
 
