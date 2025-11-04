@@ -9,6 +9,7 @@ from core.game_model import GameState, UpdateType
 from ui.grid import GridRenderer
 from ui.marker_manager import MarkerManager
 from ui.notification_manager import NotificationManager
+from ui.overlay import AchievementsOverlay, RulesOverlay
 from ui.sidebar import Sidebar
 from utils.settings import (
     GRID_PIXEL_HEIGHT,
@@ -30,15 +31,19 @@ class GameView:
 
         # Core UI components
         self.grid_renderer = GridRenderer(self.state, self.screen)
-        self.sidebar = Sidebar(self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT)
+        self.sidebar = Sidebar(
+            self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT
+        )
+        self.achievements_overlay = AchievementsOverlay(
+            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
+        )
+        self.rules_overlay = RulesOverlay(
+            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
+        )
         self.marker_manager = MarkerManager(self.screen)
         self.notification_manager = NotificationManager(self.screen)
 
-        # Possible overlay or additional UI screens (for later)
-        self.active_overlay = None  # could hold e.g. SettingsMenu or HelpScreen
-
         self.state.subscribe(self.on_state_change)
-
 
     def draw(self) -> None:
         """Draw all currently active visual components."""
@@ -50,8 +55,10 @@ class GameView:
         self.sidebar.draw()
         self.notification_manager.draw()
 
-        if self.active_overlay:
-            self.active_overlay.draw()
+        if self.state.achievements_visible:
+            self.achievements_overlay.draw()
+        elif self.state.rules_visible:
+            self.rules_overlay.draw()
 
         pygame.display.flip()
 
