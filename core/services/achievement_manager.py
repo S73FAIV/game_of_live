@@ -2,16 +2,16 @@
 
 import numpy as np
 
-from core.view import GameView
+from core.services.notification_service import NotificationService
 from ui.notification_manager import NotificationType
 
 
 class AchievementManager:
     """Recognizes classic Game of Life patterns and awards achievements."""
 
-    def __init__(self, view: GameView) -> None:
+    def __init__(self, notifier: NotificationService) -> None:
         self.unlocked: set[str] = set()
-        self.view = view
+        self.notify = notifier
 
         # Define reference patterns (1 = live cell, 0 = dead)
         self.patterns = {
@@ -60,5 +60,5 @@ class AchievementManager:
     def _unlock(self, key: str, message: str) -> None:
         """Record achievement and show notification."""
         self.unlocked.add(key)
-        self.view.notification_manager.push(message, NotificationType.ACHIEVEMENT)
+        self.notify(NotificationType.ACHIEVEMENT, message, 6)
         print(message)

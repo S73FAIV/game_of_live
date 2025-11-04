@@ -2,17 +2,16 @@
 
 import numpy as np
 
-from core.view import GameView
+from core.services.notification_service import NotificationService
 from ui.notification_manager import NotificationType
-from utils.settings import GRID_HEIGHT, GRID_WIDTH
 
 
 class RuleManager:
     """Detects and unlocks Conway's fundamental rules when first observed."""
 
-    def __init__(self, view: GameView) -> None:
+    def __init__(self, notifier: NotificationService) -> None:
         self.unlocked: set[str] = set()
-        self.view = view
+        self.notify = notifier
 
     def update(self, new_grid: np.ndarray, old_grid: np.ndarray) -> None:
         """Evaluate which Life rules are expressed between two consecutive grids."""
@@ -55,5 +54,5 @@ class RuleManager:
     def _unlock(self, key: str, message: str) -> None:
         """Mark rule as unlocked and notify."""
         self.unlocked.add(key)
-        self.view.notification_manager.push(message, NotificationType.RULE)
+        self.notify(NotificationType.RULE, message, 3)
         print(message)

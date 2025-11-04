@@ -1,28 +1,27 @@
 """Controller Orchestrating persistance and Meta-Systems."""
-
 import numpy as np
 
 from core.game_model import GameState, UpdateType
 from core.services.achievement_manager import AchievementManager
+from core.services.notification_service import NotificationService
 from core.services.rule_manager import RuleManager
 from core.services.tutorial_manager import TutorialManager
-from core.view import GameView
 
 
 class MetaController:
     achievements: AchievementManager
     tutorial: TutorialManager
     state: GameState
-    view: GameView
+    notifier: NotificationService
     old_grid: np.ndarray
 
-    def __init__(self, state: GameState, view: GameView) -> None:
+    def __init__(self, state: GameState, notifier:  NotificationService) -> None:
         self.state = state
         self.state.subscribe(self.update)
-        self.view = view
-        self.rules = RuleManager(view)
-        self.achievements = AchievementManager(view)
-        self.tutorial = TutorialManager(view)
+        self.notifier = notifier
+        self.rules = RuleManager(notifier)
+        self.achievements = AchievementManager(notifier)
+        self.tutorial = TutorialManager(notifier)
         self.old_grid = self.state.grid.copy()
 
     def update(self, update_type: UpdateType) -> None:

@@ -6,6 +6,7 @@ Handles rendering orchestration by delegating to specialized UI components.
 import pygame
 
 from core.game_model import GameState, UpdateType
+from core.meta_controller import MetaController
 from ui.grid import GridRenderer
 from ui.marker_manager import MarkerManager
 from ui.notification_manager import NotificationManager
@@ -22,6 +23,8 @@ from utils.settings import (
 
 class GameView:
     """Central orchestrator for all visual elements in the Game of Life."""
+    meta: MetaController| None = None # this will be initalized later
+
 
     def __init__(self, state: GameState) -> None:
         """Initialize and register all visual subsystems."""
@@ -34,16 +37,21 @@ class GameView:
         self.sidebar = Sidebar(
             self.state, self.screen, GRID_PIXEL_WIDTH, 0, SIDEBAR_WIDTH, TOTAL_HEIGHT
         )
-        self.achievements_overlay = AchievementsOverlay(
-            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
-        )
-        self.rules_overlay = RulesOverlay(
-            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
-        )
         self.marker_manager = MarkerManager(self.screen)
         self.notification_manager = NotificationManager(self.screen)
 
         self.state.subscribe(self.on_state_change)
+
+    def add_meta_system(self, meta: MetaController) -> None:
+        self.meta = meta
+        self.achievements_overlay = AchievementsOverlay(
+            self.meta.achievements,
+            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
+        )
+        self.rules_overlay = RulesOverlay(
+            self.meta.rules,
+            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
+        )
 
     def draw(self) -> None:
         """Draw all currently active visual components."""

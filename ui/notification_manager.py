@@ -1,11 +1,12 @@
 import time
+from enum import Enum
 
 import pygame
 
-from ui.colors import BLACK, WHITE, GRAY, LIGHTGRAY
+from ui.colors import BLACK, GRAY, LIGHTGRAY, WHITE
 
 
-class NotificationType:
+class NotificationType(Enum):
     """Defines available notification categories."""
 
     TUTORIAL = "tutorial"
@@ -19,7 +20,7 @@ class Notification:
     def __init__(
         self,
         text: str,
-        ntype: str = NotificationType.TUTORIAL,
+        ntype: NotificationType = NotificationType.TUTORIAL,
         duration: float = 3.0,
         icon_sprite: pygame.Surface | None = None
     ) -> None:
@@ -103,7 +104,7 @@ class NotificationManager:
     def push(
         self,
         text: str,
-        ntype: str = NotificationType.TUTORIAL,
+        ntype: NotificationType = NotificationType.TUTORIAL,
         duration: float = 3.0,
         icon_sprite: pygame.Surface | None = None,
     ) -> None:

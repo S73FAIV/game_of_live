@@ -2,14 +2,15 @@
 
 import numpy as np
 
-from core.view import GameView
+from core.services.notification_service import NotificationService
 from ui.notification_manager import NotificationType
+
 
 class TutorialManager:
     """Handles reactive tutorial messages based on player actions and simulation steps."""
 
-    def __init__(self, view: GameView) -> None:
-        self.view = view
+    def __init__(self, notifier: NotificationService) -> None:
+        self.notify = notifier
         self.stage = 0
         self.marker_pos: tuple[int, int] | None = None
         self.active = True
@@ -96,20 +97,20 @@ class TutorialManager:
         self.marker_pos = (int(x), int(y))
         self.initial_live_count = 1
 
-        # Create exclamation marker
-        self.view.marker_manager.create_marker(self.marker_pos, symbol="!")
+        # # Create exclamation marker
+        # self.view.marker_manager.create_marker(self.marker_pos, symbol="!")
 
         # Display tutorial intro message
-        self.view.notification_manager.push(
+        self._say(
             "Wow! You have created life in this desolate place! "
-            "Do you think it survives until the next generation?"
+            "Do you think it survives until the next generation?", "first_step", 0
         )
 
         print("Tutorial: First cell created — Stage 1 active.")
 
     def _say(self, message: str, key: str, rank: int) -> None:
         """Display a tutorial message and update progression."""
-        self.view.notification_manager.push(message, NotificationType.TUTORIAL, 6)
+        self.notify(NotificationType.TUTORIAL, message, 6)
         self.shown_messages.add(key)
         self.highest_triggered_rank = max(self.highest_triggered_rank, rank)
         print(f"Tutorial triggered ({key}) → rank {rank}")

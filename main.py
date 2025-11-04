@@ -9,6 +9,7 @@ from core.game_controller import GameController
 from core.game_model import GameState
 from core.meta_controller import MetaController
 from core.view import GameView
+from ui.notification_manager import NotificationType
 from utils.settings import FPS
 
 
@@ -31,8 +32,16 @@ def main() -> None:
     pygame.init()
     state = GameState()
     view = GameView(state)
+
+    # Implementation of NotificationService interface
+    def notifier(ntype: NotificationType, message: str, duration: float=3.0) -> None:
+        view.notification_manager.push(message, ntype, duration)
+
+    meta = MetaController(state, notifier)
+    # create access to the meta-data for the view
+    view.add_meta_system(meta)
+
     controller = GameController(state, view)
-    meta = MetaController(state, view)
 
     clock = pygame.time.Clock()
     running = True

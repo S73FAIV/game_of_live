@@ -2,6 +2,8 @@
 
 import pygame
 from ui.colors import WHITE, BLACK, GRAY
+from core.services.achievement_manager import AchievementManager
+from core.services.rule_manager import RuleManager
 
 
 class Overlay:
@@ -12,6 +14,7 @@ class Overlay:
         self.width = width
         self.height = height
         self.visible = False
+        self.font = pygame.font.SysFont("Arial", 22, bold=True)
 
     def draw(self) -> None:
         """Draw a semi-transparent layer (base)."""
@@ -27,17 +30,24 @@ class Overlay:
 class AchievementsOverlay(Overlay):
     """Overlay showing unlocked achievements."""
 
-    def __init__(self, surface: pygame.Surface, width: int, height: int) -> None:
+    def __init__(
+        self,
+        achievements: AchievementManager,
+        surface: pygame.Surface,
+        width: int,
+        height: int,
+    ) -> None:
         super().__init__(surface, width, height)
-        self.font = pygame.font.SysFont("Arial", 22, bold=True)
-        self.items = []  # will later hold achievement data
+        self.achievements = achievements
 
     def draw(self) -> None:
         super().draw()
         text = self.font.render("Unlocked Achievements", True, BLACK)
         self.surface.blit(text, (self.width // 2 - text.get_width() // 2, 40))
-        # placeholder items
-        for i, label in enumerate(self.items or ["None yet..."]):
+
+        items = self.achievements.unlocked
+
+        for i, label in enumerate(items or ["None yet..."]):
             txt = self.font.render(label, True, GRAY)
             self.surface.blit(txt, (100, 100 + i * 40))
 
@@ -45,16 +55,18 @@ class AchievementsOverlay(Overlay):
 class RulesOverlay(Overlay):
     """Overlay showing unlocked rules."""
 
-    def __init__(self, surface: pygame.Surface, width: int, height: int) -> None:
+    def __init__(
+        self, rules: RuleManager, surface: pygame.Surface, width: int, height: int
+    ) -> None:
         super().__init__(surface, width, height)
-        self.font = pygame.font.SysFont("Arial", 22, bold=True)
-        self.items = []  # will later hold rule data
+        self.rules = rules
 
     def draw(self) -> None:
         super().draw()
         text = self.font.render("Discovered Rules", True, BLACK)
         self.surface.blit(text, (self.width // 2 - text.get_width() // 2, 40))
         # placeholder items
-        for i, label in enumerate(self.items or ["No rules discovered."]):
+        items = self.rules.unlocked
+        for i, label in enumerate(items or ["No rules discovered."]):
             txt = self.font.render(label, True, GRAY)
             self.surface.blit(txt, (100, 100 + i * 40))
