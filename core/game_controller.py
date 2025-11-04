@@ -84,3 +84,10 @@ class GameController:
                 self.state.sound.toggle_mute()
             case "trash":
                 self.state.clear_grid()
+            case "achievements":
+                self.state.toggle_view_achievements()
+                self.view.sidebar.set_main_buttons_enabled(not self.state.achievements_visible)
+            case "rules":
+                self.state.toggle_view_rules()
+                self.view.sidebar.set_main_buttons_enabled(not self.state.rules_visible)
+

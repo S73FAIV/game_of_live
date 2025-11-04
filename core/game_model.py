@@ -67,6 +67,9 @@ class GameState:
         # sound
         self.sound = SoundManager()
         self.sound.play_music()
+        # the view
+        self.achievements_visible = False
+        self.rules_visible = False
         # model-controller-view
         self.subscribers = []
 
@@ -186,3 +189,15 @@ class GameState:
             int
         )
         return new_grid
+
+    def toggle_view_achievements(self) -> None:
+        """Toggle achievements view; ensure rules view is hidden."""
+        self.achievements_visible = not self.achievements_visible
+        if self.achievements_visible:
+            self.rules_visible = False
+
+    def toggle_view_rules(self) -> None:
+        """Toggle rules view; ensure achievements view is hidden."""
+        self.rules_visible = not self.rules_visible
+        if self.rules_visible:
+            self.achievements_visible = False

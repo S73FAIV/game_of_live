@@ -40,11 +40,35 @@ class Sidebar:
 
         # Define UI elemet positions
         self.buttons = {
-            "step": Button(pygame.Rect(x + 20, y + 50, width - 40, 40), label="Next Generation"),
-            "start": Button(pygame.Rect(x + 20, y + 100, width - 40, 40), label="Run Evolution"),
-            "pause": Button(pygame.Rect(x + 20, y + 150, width - 40, 40), label="Stop Evolution"),
-            "sound": Button(pygame.Rect(x + width - 50, y + height - 50, 32, 32), icon_path="assets/img/volume.png"),
-            "trash": Button(pygame.Rect(x + width - 90, y + height - 50, 32, 32), icon_path="assets/img/delete.png"),
+            "step": Button(
+                pygame.Rect(x + 20, y + 50, width - 40, 40), label="Next Generation"
+            ),
+            "start": Button(
+                pygame.Rect(x + 20, y + 100, width - 40, 40), label="Run Evolution"
+            ),
+            "pause": Button(
+                pygame.Rect(x + 20, y + 150, width - 40, 40), label="Stop Evolution"
+            ),
+            "achievements": Button(
+                pygame.Rect(x + 20, y + 210, width - 40, 40),
+                label="Achievements",
+                toggleable=True,
+                accent_color=(255, 100, 0),
+            ),
+            "rules": Button(
+                pygame.Rect(x + 20, y + 260, width - 40, 40),
+                label="Rules",
+                toggleable=True,
+                accent_color=(100, 100, 255),
+            ),
+            "sound": Button(
+                pygame.Rect(x + width - 50, y + height - 50, 32, 32),
+                icon_path="assets/img/volume.png",
+            ),
+            "trash": Button(
+                pygame.Rect(x + width - 90, y + height - 50, 32, 32),
+                icon_path="assets/img/delete.png",
+            ),
         }
 
     def draw(self) -> None:
@@ -56,7 +80,18 @@ class Sidebar:
             button.draw(self.surface)
 
     def handle_event(self, event: pygame.event.Event) -> str | None:
+        """Delegate events only if relevant buttons are enabled."""
         for name, button in self.buttons.items():
             if button.handle_event(event):
+                # Mutual exclusion: untoggle the other if both are toggleable
+                if name in ("achievements", "rules"):
+                    other = "rules" if name == "achievements" else "achievements"
+                    if self.buttons[other].toggled:
+                        self.buttons[other].toggled = False
                 return name
         return None
+
+    def set_main_buttons_enabled(self, enabled: bool) -> None:
+        """Toggle enabled of main control buttons (step/start/pause)."""
+        for key in ("step", "start", "pause", "trash"):
+            self.buttons[key].enabled = enabled
