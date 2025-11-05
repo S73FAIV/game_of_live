@@ -1,5 +1,6 @@
 import pygame
 
+
 def tint_surface(surface: pygame.Surface, tint_color: tuple[int, int, int]) -> pygame.Surface:
     """Return a tinted copy of a surface while preserving alpha."""
     tinted = surface.copy()

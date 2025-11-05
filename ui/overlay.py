@@ -24,6 +24,7 @@ class Overlay:
         self.height = height
         self.visible = False
         self.font = pygame.font.SysFont("Arial", 22, bold=True)
+        self.desc_font = pygame.font.SysFont("Arial", 18, bold=True)
 
     def draw(self) -> None:
         """Draw a semi-transparent layer (base)."""
@@ -66,11 +67,37 @@ class AchievementsOverlay(Overlay):
         title = self.font.render("Unlocked Achievements", True, BLACK)
         self.surface.blit(title, (100, 40))
 
-        # list
-        for i, label in enumerate(self.achievements.unlocked or ["None yet..."]):
-            txt = self.font.render(label, True, BLACK)
-            self.surface.blit(txt, (120, 140 + i * 40))
-            pygame.draw.rect(self.surface, self.tint, (80, 148 + i * 40, 20, 20))
+        # check if any achievements exist
+        if not self.achievements.unlocked:
+            placeholder = self.font.render("None yet...", True, GRAY)
+            self.surface.blit(
+                placeholder,
+                (
+                    self.width // 2 - placeholder.get_width() // 2,
+                    self.height // 2 - placeholder.get_height() // 2,
+                ),
+            )
+            return  # stop drawing further
+
+        # entries
+        y_base = 140
+        for i, key in enumerate(self.achievements.unlocked or ["None yet..."]):
+            ach = self.achievements.achievements.get(key)
+            if not ach:
+                continue
+
+            y = y_base + i * 60  # extra spacing for description line
+
+            # coloured square accent (as before)
+            pygame.draw.rect(self.surface, self.tint, (80, y + 8, 20, 20))
+
+            # title (same position as before)
+            title_surf = self.font.render(ach.title, True, BLACK)
+            self.surface.blit(title_surf, (120, y))
+
+            # description line below title
+            desc_surf = self.desc_font.render(ach.description, True, GRAY)
+            self.surface.blit(desc_surf, (120, y + 28))
 
 
 class RulesOverlay(Overlay):
@@ -98,9 +125,28 @@ class RulesOverlay(Overlay):
         title = self.font.render("Discovered Rules", True, BLACK)
         self.surface.blit(title, (100, 40))
 
-        # Items
-        items = self.rules.unlocked
-        for i, label in enumerate(items or ["No rules discovered."]):
-            txt = self.font.render(label, True, BLACK)
-            self.surface.blit(txt, (120, 140 + i * 40))
-            pygame.draw.rect(self.surface, self.tint, (80, 148 + i * 40, 20, 20))
+        # no rules yet
+        if not self.rules.unlocked:
+            placeholder = self.font.render("No rules discovered.", True, GRAY)
+            self.surface.blit(
+                placeholder,
+                (
+                    self.width // 2 - placeholder.get_width() // 2,
+                    self.height // 2 - placeholder.get_height() // 2,
+                ),
+            )
+            return
+
+        # list entries
+        y_base = 140
+        for i, key in enumerate(self.rules.unlocked):
+            rule = self.rules.rules.get(key)
+            if not rule:
+                continue
+
+            y = y_base + i * 60
+            pygame.draw.rect(self.surface, self.tint, (80, y + 8, 20, 20))
+            title_surf = self.font.render(rule.title, True, BLACK)
+            self.surface.blit(title_surf, (120, y))
+            desc_surf = self.desc_font.render(rule.description, True, GRAY)
+            self.surface.blit(desc_surf, (120, y + 28))

@@ -1,6 +1,7 @@
 """Handles temporary tutorial or highlight markers drawn on the grid."""
 
 import pygame
+
 from ui.colors import RED
 from utils.settings import TILE_SIZE
 

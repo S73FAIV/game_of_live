@@ -2,8 +2,7 @@
 
 import pygame
 
-from ui.colors import WHITE, BLACK, GRAY
-
+from ui.colors import BLACK, GRAY, WHITE
 
 
 class Button:

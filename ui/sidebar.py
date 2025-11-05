@@ -8,8 +8,7 @@ import pygame
 
 from core.game_model import GameState
 from ui.button import Button
-from ui.colors import BLACK, WHITE, ACHIEVEMENT_COLOUR, RULE_COLOUR
-from utils.settings import SIDEBAR_WIDTH, TOTAL_HEIGHT, TOTAL_WIDTH
+from ui.colors import ACHIEVEMENT_COLOUR, BLACK, RULE_COLOUR, WHITE
 
 
 class Sidebar:
