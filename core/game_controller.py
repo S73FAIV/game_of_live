@@ -56,7 +56,11 @@ class GameController:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x = event.pos[0]
-                if x < GRID_PIXEL_WIDTH:  # inside grid
+                if (
+                    x < GRID_PIXEL_WIDTH
+                    and not self.state.achievements_visible
+                    and not self.state.rules_visible
+                ):  # inside grid and grid interactible
                     self.handle_grid_interaction(event.pos)
 
             elif event.type == pygame.KEYDOWN:
@@ -67,7 +71,6 @@ class GameController:
 
     def handle_grid_interaction(self, pos: tuple[int, int]) -> None:
         """Check if Grid was clicked and act accordingly."""
-
         # FIXME: Part of the tutorial had to be moved here
         # Create exclamation marker
         if self.first_time:
@@ -94,8 +97,9 @@ class GameController:
                 self.state.clear_grid()
             case "achievements":
                 self.state.toggle_view_achievements()
-                self.view.sidebar.set_main_buttons_enabled(not self.state.achievements_visible)
+                self.view.sidebar.set_main_buttons_enabled(
+                    not self.state.achievements_visible
+                )
             case "rules":
                 self.state.toggle_view_rules()
                 self.view.sidebar.set_main_buttons_enabled(not self.state.rules_visible)
-
