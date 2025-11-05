@@ -107,7 +107,9 @@ class TutorialManager:
         # Display tutorial intro message
         self._say(
             "Wow! You have created life in this desolate place! "
-            "Do you think it survives until the next generation?", "first_step", 0
+            "Do you think it survives until the next generation?",
+            "first_step",
+            0,
         )
 
         print("Tutorial: First cell created — Stage 1 active.")

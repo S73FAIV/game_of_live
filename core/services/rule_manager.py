@@ -24,24 +24,23 @@ class RuleManager:
         self.rules["underpopulation"] = Rule(
             title="Underpopulation",
             description="Any live cell with fewer than two live neighbours dies, as if by underpopulation.",
-            notification="A lonely cell has died from isolation."
+            notification="A lonely cell has died from isolation.",
         )
         self.rules["survival"] = Rule(
             title="Survival",
             description="Any live cell with two or three live neighbours lives on to the next generation.",
-            notification="Some cells have stabilized and survived."
+            notification="Some cells have stabilized and survived.",
         )
         self.rules["overpopulation"] = Rule(
             title="Overpopulation",
             description="Any live cell with more than three live neighbours dies, as if by overpopulation.",
-            notification="A crowded area has collapsed from overpopulation."
+            notification="A crowded area has collapsed from overpopulation.",
         )
         self.rules["reproduction"] = Rule(
             title="Reproduction",
             description="Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.",
-            notification= "New life has emerged from perfect balance."
+            notification="New life has emerged from perfect balance.",
         )
-
 
     def update(self, new_grid: np.ndarray, old_grid: np.ndarray) -> None:
         """Evaluate which Life rules are expressed between two consecutive grids."""
@@ -73,9 +72,7 @@ class RuleManager:
 
         # Rule 3 - Overpopulation: alive → dead, > 3 neighbors
         if np.any(deaths & (neighbors > 3)) and "overpopulation" not in self.unlocked:
-            self._unlock(
-                "overpopulation"
-            )
+            self._unlock("overpopulation")
 
         # Rule 4 - Reproduction: dead → alive, exactly 3 neighbors
         if np.any(births & (neighbors == 3)) and "reproduction" not in self.unlocked:

@@ -15,4 +15,3 @@ class Achievement:
     variants: Sequence[np.ndarray] | None = None
     icon_path: str = ACHIEVEMENT_ICON_PATH
     color: tuple[int, int, int] = ACHIEVEMENT_COLOUR
-

@@ -15,7 +15,7 @@ class NotificationService(Protocol):
         ntype: NotificationType,
         message: str,
         duration: float = 3.0,
-        item_sprite: pygame.Surface|None = None
+        item_sprite: pygame.Surface | None = None,
     ) -> None:
         """Display a notification message of a given type.
 

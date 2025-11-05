@@ -23,8 +23,8 @@ from utils.settings import (
 
 class GameView:
     """Central orchestrator for all visual elements in the Game of Life."""
-    meta: MetaController| None = None # this will be initalized later
 
+    meta: MetaController | None = None  # this will be initalized later
 
     def __init__(self, state: GameState) -> None:
         """Initialize and register all visual subsystems."""
@@ -45,12 +45,10 @@ class GameView:
     def add_meta_system(self, meta: MetaController) -> None:
         self.meta = meta
         self.achievements_overlay = AchievementsOverlay(
-            self.meta.achievements,
-            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
+            self.meta.achievements, self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
         )
         self.rules_overlay = RulesOverlay(
-            self.meta.rules,
-            self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
+            self.meta.rules, self.screen, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT
         )
 
     def draw(self) -> None:

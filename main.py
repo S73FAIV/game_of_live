@@ -38,7 +38,7 @@ def main() -> None:
         ntype: NotificationType,
         message: str,
         duration: float = 3.0,
-        item_sprite: pygame.SurfaceType|None = None,
+        item_sprite: pygame.SurfaceType | None = None,
     ) -> None:
         view.notification_manager.push(message, ntype, duration, item_sprite)
 

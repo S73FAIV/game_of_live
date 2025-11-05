@@ -1,4 +1,5 @@
 """Controller Orchestrating persistance and Meta-Systems."""
+
 import numpy as np
 
 from core.game_model import GameState, UpdateType
@@ -15,7 +16,7 @@ class MetaController:
     notifier: NotificationService
     old_grid: np.ndarray
 
-    def __init__(self, state: GameState, notifier:  NotificationService) -> None:
+    def __init__(self, state: GameState, notifier: NotificationService) -> None:
         self.state = state
         self.state.subscribe(self.update)
         self.notifier = notifier

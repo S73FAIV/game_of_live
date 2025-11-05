@@ -56,7 +56,7 @@ class Notification:
 
             case NotificationType.RULE:
                 self.position = "bottom-right"
-                self.icon_tint =  RULE_COLOUR # blue tint
+                self.icon_tint = RULE_COLOUR  # blue tint
 
         if icon_sprite:
             # user-supplied sprite for tutorial (e.g. character)

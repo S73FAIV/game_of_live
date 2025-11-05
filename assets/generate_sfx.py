@@ -5,7 +5,10 @@ from scipy.io import wavfile
 
 SAMPLE_RATE = 44100  # Hz
 
-def make_lofi_sweep(start_freq=440, end_freq=440, duration_ms=100, volume=0.5, decay=0.95):
+
+def make_lofi_sweep(
+    start_freq=440, end_freq=440, duration_ms=100, volume=0.5, decay=0.95
+):
     """Generate a short lo-fi sound with a linear pitch sweep."""
     n_samples = int(SAMPLE_RATE * (duration_ms / 1000.0))
     t = np.linspace(0, duration_ms / 1000.0, n_samples, False)
@@ -26,6 +29,7 @@ def make_lofi_sweep(start_freq=440, end_freq=440, duration_ms=100, volume=0.5, d
     audio = np.int16(signal / np.max(np.abs(signal)) * 32767)
     return audio
 
+
 def generate_sounds():
     """Generate and export cell birth and death sounds with pitch sweeps."""
     # Cell birth → ascending tone
@@ -37,6 +41,7 @@ def generate_sounds():
     wavfile.write("sfx/cell_death.wav", SAMPLE_RATE, death)
 
     print("✅ Sound effects generated in assets/sfx/")
+
 
 if __name__ == "__main__":
     generate_sounds()
