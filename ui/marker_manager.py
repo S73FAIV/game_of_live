@@ -39,10 +39,12 @@ class MarkerManager:
     def _draw_marker(self, pos: tuple[int, int], symbol: str) -> None:
         """Draw a single marker centered above a cell."""
         x, y = pos
-        font = pygame.font.SysFont("arial", int(TILE_SIZE * 1.2), bold=True)
+        font = pygame.font.SysFont("arial", int(TILE_SIZE * 2), bold=True)
         text = font.render(symbol, True, RED)
         rect = text.get_rect()
-        rect.center = (x * TILE_SIZE + TILE_SIZE // 2, y * TILE_SIZE - TILE_SIZE // 2)
+        # The follwoing code wants a grid-position instead of a real-position
+        # rect.center = (x * TILE_SIZE + TILE_SIZE // 2, y * TILE_SIZE - TILE_SIZE // 2)
+        rect.center = (x + TILE_SIZE, y - TILE_SIZE)
         self.screen.blit(text, rect)
 
     def clear(self) -> None:

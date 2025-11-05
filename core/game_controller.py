@@ -31,6 +31,7 @@ class GameController:
         """
         self.state = state
         self.view = view
+        self.first_time = True
 
     def handle_events(self) -> bool:
         """Process Pygame events such as clicks, keypresses, and window close.
@@ -66,6 +67,14 @@ class GameController:
 
     def handle_grid_interaction(self, pos: tuple[int, int]) -> None:
         """Check if Grid was clicked and act accordingly."""
+
+        # FIXME: Part of the tutorial had to be moved here
+        # Create exclamation marker
+        if self.first_time:
+            print("Grid interaction triggered once with pos:", pos)
+            self.view.marker_manager.create_marker(pos, symbol="!")
+            self.first_time = False
+
         x, y = pos
         grid_x = x // TILE_SIZE
         grid_y = y // TILE_SIZE

@@ -1,9 +1,10 @@
 """Overlay system for displaying achievements or rules over the grid."""
 
 import pygame
-from ui.colors import WHITE, BLACK, GRAY
+
 from core.services.achievement_manager import AchievementManager
 from core.services.rule_manager import RuleManager
+from ui.colors import BLACK, GRAY, WHITE
 
 
 class Overlay:
