@@ -4,6 +4,7 @@ import numpy as np
 import pygame
 
 from core.services.notification_service import NotificationService
+from ui.icons import TUTORIAL_ICON_PATH
 from ui.notification_manager import NotificationType
 
 
@@ -17,7 +18,7 @@ class TutorialManager:
         self.active = True
         self.shown_messages: set[str] = set()
         self.highest_triggered_rank = -1
-        self.icon_sprite = pygame.image.load("assets/img/checked.png").convert_alpha()
+        self.icon_sprite = pygame.image.load(TUTORIAL_ICON_PATH).convert_alpha()
         self.icon_sprite = pygame.transform.smoothscale(self.icon_sprite, (32, 32))
 
     def update(

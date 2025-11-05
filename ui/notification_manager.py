@@ -3,7 +3,9 @@ from enum import Enum
 
 import pygame
 
-from ui.colors import BLACK, WHITE, ACHIEVEMENT_COLOUR, RULE_COLOUR, TUTORIAL_COLOUR
+from ui.colors import ACHIEVEMENT_COLOUR, BLACK, RULE_COLOUR, TUTORIAL_COLOUR, WHITE
+from ui.utils import tint_surface
+
 
 class NotificationType(Enum):
     """Defines available notification categories."""
@@ -59,16 +61,7 @@ class Notification:
         if icon_sprite:
             # user-supplied sprite for tutorial (e.g. character)
             scaled = pygame.transform.smoothscale(icon_sprite, icon_size)
-            self.icon_surface = self._tint_surface(scaled, self.icon_tint)
-
-    def _tint_surface(self, surface: pygame.Surface, tint_color: tuple[int, int, int]) -> pygame.Surface:
-        """Return a tinted copy of a surface while preserving alpha."""
-        tinted = surface.copy()
-        tinted.fill((0, 0, 0, 255), special_flags=pygame.BLEND_RGBA_MULT)
-        tint_overlay = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
-        tint_overlay.fill((*tint_color, 0))
-        tinted.blit(tint_overlay, (0, 0), special_flags=pygame.BLEND_RGBA_ADD)
-        return tinted
+            self.icon_surface = tint_surface(scaled, self.icon_tint)
 
     @property
     def expired(self) -> bool:

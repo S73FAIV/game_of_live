@@ -4,6 +4,7 @@ import numpy as np
 import pygame
 
 from core.services.notification_service import NotificationService
+from ui.icons import RULE_ICON_PATH
 from ui.notification_manager import NotificationType
 
 
@@ -12,7 +13,7 @@ class RuleManager:
 
     def __init__(self, notifier: NotificationService) -> None:
         self.unlocked: set[str] = set()
-        self.icon_sprite = pygame.image.load("assets/img/clipboard.png").convert_alpha()
+        self.icon_sprite = pygame.image.load(RULE_ICON_PATH).convert_alpha()
         self.icon_sprite = pygame.transform.smoothscale(self.icon_sprite, (32, 32))
         self.notify = notifier
 

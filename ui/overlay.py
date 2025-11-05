@@ -4,7 +4,15 @@ import pygame
 
 from core.services.achievement_manager import AchievementManager
 from core.services.rule_manager import RuleManager
-from ui.colors import BLACK, GRAY, WHITE
+from ui.colors import (
+    ACHIEVEMENT_COLOUR,
+    BLACK,
+    GRAY,
+    RULE_COLOUR,
+    WHITE,
+)
+from ui.icons import ACHIEVEMENT_ICON_PATH, RULE_ICON_PATH
+from ui.utils import tint_surface
 
 
 class Overlay:
@@ -23,6 +31,7 @@ class Overlay:
         overlay_surface.set_alpha(230)
         overlay_surface.fill(WHITE)
         self.surface.blit(overlay_surface, (0, 0))
+        pygame.draw.rect(self.surface, BLACK, (0, 0, self.width, self.height), 3)
 
     def set_visible(self, visible: bool) -> None:
         self.visible = visible
@@ -40,17 +49,28 @@ class AchievementsOverlay(Overlay):
     ) -> None:
         super().__init__(surface, width, height)
         self.achievements = achievements
+        self.icon = pygame.image.load(ACHIEVEMENT_ICON_PATH).convert_alpha()
+        self.tint = ACHIEVEMENT_COLOUR
+        self.icon = pygame.transform.smoothscale(self.icon, (32, 32))
+        self.icon = tint_surface(self.icon, self.tint)
 
     def draw(self) -> None:
         super().draw()
-        text = self.font.render("Unlocked Achievements", True, BLACK)
-        self.surface.blit(text, (self.width // 2 - text.get_width() // 2, 40))
+        # header
+        header_rect = pygame.Rect(0, 0, self.width, 100)
+        pygame.draw.rect(self.surface, WHITE, header_rect)
+        pygame.draw.rect(self.surface, BLACK, header_rect, 6)
 
-        items = self.achievements.unlocked
+        # icon + title
+        self.surface.blit(self.icon, (40, 34))
+        title = self.font.render("Unlocked Achievements", True, BLACK)
+        self.surface.blit(title, (100, 40))
 
-        for i, label in enumerate(items or ["None yet..."]):
-            txt = self.font.render(label, True, GRAY)
-            self.surface.blit(txt, (100, 100 + i * 40))
+        # list
+        for i, label in enumerate(self.achievements.unlocked or ["None yet..."]):
+            txt = self.font.render(label, True, BLACK)
+            self.surface.blit(txt, (120, 140 + i * 40))
+            pygame.draw.rect(self.surface, self.tint, (80, 148 + i * 40, 20, 20))
 
 
 class RulesOverlay(Overlay):
@@ -61,13 +81,26 @@ class RulesOverlay(Overlay):
     ) -> None:
         super().__init__(surface, width, height)
         self.rules = rules
+        self.icon = pygame.image.load(RULE_ICON_PATH).convert_alpha()
+        self.tint = RULE_COLOUR
+        self.icon = pygame.transform.smoothscale(self.icon, (32, 32))
+        self.icon = tint_surface(self.icon, self.tint)
 
     def draw(self) -> None:
         super().draw()
-        text = self.font.render("Discovered Rules", True, BLACK)
-        self.surface.blit(text, (self.width // 2 - text.get_width() // 2, 40))
-        # placeholder items
+        # header
+        header_rect = pygame.Rect(0, 0, self.width, 100)
+        pygame.draw.rect(self.surface, WHITE, header_rect)
+        pygame.draw.rect(self.surface, BLACK, header_rect, 6)
+
+        # Icon + Heading
+        self.surface.blit(self.icon, (40, 34))
+        title = self.font.render("Discovered Rules", True, BLACK)
+        self.surface.blit(title, (100, 40))
+
+        # Items
         items = self.rules.unlocked
         for i, label in enumerate(items or ["No rules discovered."]):
-            txt = self.font.render(label, True, GRAY)
-            self.surface.blit(txt, (100, 100 + i * 40))
+            txt = self.font.render(label, True, BLACK)
+            self.surface.blit(txt, (120, 140 + i * 40))
+            pygame.draw.rect(self.surface, self.tint, (80, 148 + i * 40, 20, 20))

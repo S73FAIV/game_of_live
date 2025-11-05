@@ -4,6 +4,7 @@ import numpy as np
 import pygame
 
 from core.services.notification_service import NotificationService
+from ui.icons import ACHIEVEMENT_ICON_PATH
 from ui.notification_manager import NotificationType
 
 
@@ -14,7 +15,7 @@ class AchievementManager:
         self.unlocked: set[str] = set()
         self.notify = notifier
 
-        self.icon_sprite = pygame.image.load("assets/img/band.png").convert_alpha()
+        self.icon_sprite = pygame.image.load(ACHIEVEMENT_ICON_PATH).convert_alpha()
         self.icon_sprite = pygame.transform.smoothscale(self.icon_sprite, (32, 32))
 
         # Define reference patterns (1 = live cell, 0 = dead)
