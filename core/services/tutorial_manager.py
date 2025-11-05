@@ -90,7 +90,7 @@ class TutorialManager:
                 if (
                     condition
                     and key not in self.shown_messages
-                    and rank > self.highest_triggered_rank
+                    and rank >= self.highest_triggered_rank
                 ):
                     self._say(message, key, rank)
                     break  # only one message per frame
