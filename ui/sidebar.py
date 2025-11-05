@@ -8,7 +8,7 @@ import pygame
 
 from core.game_model import GameState
 from ui.button import Button
-from ui.colors import BLACK, WHITE
+from ui.colors import BLACK, WHITE, ACHIEVEMENT_COLOUR, RULE_COLOUR
 from utils.settings import SIDEBAR_WIDTH, TOTAL_HEIGHT, TOTAL_WIDTH
 
 
@@ -53,13 +53,13 @@ class Sidebar:
                 pygame.Rect(x + 20, y + 210, width - 40, 40),
                 label="Achievements",
                 toggleable=True,
-                accent_color=(255, 100, 0),
+                accent_color=ACHIEVEMENT_COLOUR,
             ),
             "rules": Button(
                 pygame.Rect(x + 20, y + 260, width - 40, 40),
                 label="Rules",
                 toggleable=True,
-                accent_color=(100, 100, 255),
+                accent_color=RULE_COLOUR,
             ),
             "sound": Button(
                 pygame.Rect(x + width - 50, y + height - 50, 32, 32),

@@ -71,7 +71,6 @@ class GameController:
         # FIXME: Part of the tutorial had to be moved here
         # Create exclamation marker
         if self.first_time:
-            print("Grid interaction triggered once with pos:", pos)
             self.view.marker_manager.create_marker(pos, symbol="!")
             self.first_time = False
 

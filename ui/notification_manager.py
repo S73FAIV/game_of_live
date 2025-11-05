@@ -3,8 +3,7 @@ from enum import Enum
 
 import pygame
 
-from ui.colors import BLACK, GRAY, LIGHTGRAY, WHITE
-
+from ui.colors import BLACK, WHITE, ACHIEVEMENT_COLOUR, RULE_COLOUR, TUTORIAL_COLOUR
 
 class NotificationType(Enum):
     """Defines available notification categories."""
@@ -22,7 +21,7 @@ class Notification:
         text: str,
         ntype: NotificationType = NotificationType.TUTORIAL,
         duration: float = 3.0,
-        icon_sprite: pygame.Surface | None = None
+        icon_sprite: pygame.Surface | None = None,
     ) -> None:
         self.text = text
         self.ntype = ntype
@@ -47,46 +46,29 @@ class Notification:
         match self.ntype:
             case NotificationType.TUTORIAL:
                 self.position = "top-center"
-                self.icon_tint = (255, 235, 150)  # yellow tint
-                if icon_sprite:
-                    # user-supplied sprite for tutorial (e.g. character)
-                    self.icon_surface = pygame.transform.smoothscale(
-                        icon_sprite, icon_size
-                    )
-                else:
-                    # default speech-bubble icon
-                    self.icon_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
-                    pygame.draw.rect(self.icon_surface, self.icon_tint, (4, 4, 16, 14))
-                    pygame.draw.polygon(
-                        self.icon_surface, self.icon_tint, [(6, 18), (10, 14), (14, 18)]
-                    )
+                self.icon_tint = TUTORIAL_COLOUR  # yellow tint
 
             case NotificationType.ACHIEVEMENT:
                 self.position = "bottom-right"
-                self.icon_tint = (120, 200, 120)  # green tint
-                self.icon_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
-                pygame.draw.circle(
-                    self.icon_surface, self.icon_tint, (12, 12), 10, width=0
-                )
-                pygame.draw.circle(
-                    self.icon_surface, BLACK, (12, 12), 10, width=2
-                )
-                pygame.draw.line(
-                    self.icon_surface, BLACK, (8, 12), (11, 15), 2
-                )
-                pygame.draw.line(
-                    self.icon_surface, BLACK, (11, 15), (16, 8), 2
-                )
+                self.icon_tint = ACHIEVEMENT_COLOUR  # green tint
 
             case NotificationType.RULE:
                 self.position = "bottom-right"
-                self.icon_tint = (120, 160, 230)  # blue tint
-                self.icon_surface = pygame.Surface(icon_size, pygame.SRCALPHA)
-                pygame.draw.rect(self.icon_surface, self.icon_tint, (4, 4, 16, 16))
-                pygame.draw.rect(self.icon_surface, BLACK, (4, 4, 16, 16), width=2)
-                pygame.draw.line(
-                    self.icon_surface, BLACK, (4, 4), (20, 20), 2
-                )
+                self.icon_tint =  RULE_COLOUR # blue tint
+
+        if icon_sprite:
+            # user-supplied sprite for tutorial (e.g. character)
+            scaled = pygame.transform.smoothscale(icon_sprite, icon_size)
+            self.icon_surface = self._tint_surface(scaled, self.icon_tint)
+
+    def _tint_surface(self, surface: pygame.Surface, tint_color: tuple[int, int, int]) -> pygame.Surface:
+        """Return a tinted copy of a surface while preserving alpha."""
+        tinted = surface.copy()
+        tinted.fill((0, 0, 0, 255), special_flags=pygame.BLEND_RGBA_MULT)
+        tint_overlay = pygame.Surface(surface.get_size(), pygame.SRCALPHA)
+        tint_overlay.fill((*tint_color, 0))
+        tinted.blit(tint_overlay, (0, 0), special_flags=pygame.BLEND_RGBA_ADD)
+        return tinted
 
     @property
     def expired(self) -> bool:
@@ -109,7 +91,9 @@ class NotificationManager:
         icon_sprite: pygame.Surface | None = None,
     ) -> None:
         """Add a new notification to the queue."""
-        self.active_notifications.append(Notification(text, ntype, duration, icon_sprite))
+        self.active_notifications.append(
+            Notification(text, ntype, duration, icon_sprite)
+        )
 
     def draw(self) -> None:
         """Render and manage fading notifications on screen."""
@@ -172,7 +156,9 @@ class NotificationManager:
             # base + shadow
             bg_surface = pygame.Surface((bg_w, bg_h))
             bg_surface.fill(notification.bg_color)
-            pygame.draw.rect(bg_surface, notification.border_color, bg_surface.get_rect(), 3)
+            pygame.draw.rect(
+                bg_surface, notification.border_color, bg_surface.get_rect(), 3
+            )
 
             shadow_offset = 5
             shadow = pygame.Surface((bg_w, bg_h))
@@ -195,7 +181,7 @@ class NotificationManager:
                 y_offset -= bg_surface.get_height() + 10
                 y = y_offset
 
-                        # blit
+                # blit
             self.screen.blit(shadow, (x + shadow_offset, y + shadow_offset))
             self.screen.blit(bg_surface, (x, y))
             if notification.icon_surface:
