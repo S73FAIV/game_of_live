@@ -15,7 +15,7 @@ class TutorialManager:
         self.notify = notifier
         self.stage = 0
         self.marker_pos: tuple[int, int] | None = None
-        self.active = True
+        self.active = False
         self.shown_messages: set[str] = set()
         self.highest_triggered_rank = -1
         self.icon_sprite = pygame.image.load(TUTORIAL_ICON_PATH).convert_alpha()

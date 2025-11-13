@@ -7,6 +7,7 @@ and notifies subscribers (views) when the state changes.
 
 from __future__ import annotations
 
+import os
 import time
 from typing import TYPE_CHECKING
 
@@ -58,7 +59,15 @@ class GameState:
         self.height = height
         self.total_cells = width * height
         # the grid
-        self.grid = np.zeros((height, width), dtype=int)
+        self.path = "grid_state.npy"
+        if os.path.exists(self.path):
+            loaded = np.load(self.path)
+            self.grid = self.center_embed(loaded, (height, width))
+            print(f"Loaded and centered grid: {loaded.shape} -> {self.grid.shape}")
+        else:
+            self.grid = np.zeros((height, width), dtype=int)
+            print("Created new empty grid.")
+        # self.grid = np.zeros((height, width), dtype=int)
         self.births = np.zeros((height, width), dtype=int)
         self.deaths = np.zeros((height, width), dtype=int)
         # the simulation
@@ -112,6 +121,8 @@ class GameState:
         self.sound.play_generation_batch(
             n_births, n_deaths, live_cells, self.total_cells
         )
+        np.save(self.path, self.grid)
+        print("Cell toogled: (", x, "/", y, ")")
         self.notify(UpdateType.CELL_TOGGLE)
 
     def step(self) -> bool:
@@ -201,3 +212,24 @@ class GameState:
         self.rules_visible = not self.rules_visible
         if self.rules_visible:
             self.achievements_visible = False
+
+    def center_embed(self, source: np.ndarray, target_shape: tuple[int, int]) -> np.ndarray:
+        """Embed source array into a zeroed target of target_shape, centered."""
+        th, tw = target_shape
+        sh, sw = source.shape
+        target = np.zeros((th, tw), dtype=source.dtype)
+
+        # crop if source larger
+        if sh > th:
+            top = (sh - th) // 2
+            source = source[top:top + th, :]
+        if sw > tw:
+            left = (sw - tw) // 2
+            source = source[:, left:left + tw]
+
+        # recompute shapes after cropping
+        sh, sw = source.shape
+        top = (th - sh) // 2
+        left = (tw - sw) // 2
+        target[top:top + sh, left:left + sw] = source
+        return target

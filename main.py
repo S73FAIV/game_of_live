@@ -40,7 +40,8 @@ def main() -> None:
         duration: float = 3.0,
         item_sprite: pygame.SurfaceType | None = None,
     ) -> None:
-        view.notification_manager.push(message, ntype, duration, item_sprite)
+        # view.notification_manager.push(message, ntype, duration, item_sprite)
+        pass
 
     meta = MetaController(state, notifier)
     # create access to the meta-data for the view

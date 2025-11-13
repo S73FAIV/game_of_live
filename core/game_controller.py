@@ -73,9 +73,9 @@ class GameController:
         """Check if Grid was clicked and act accordingly."""
         # FIXME: Part of the tutorial had to be moved here
         # Create exclamation marker
-        if self.first_time:
-            self.view.marker_manager.create_marker(pos, symbol="!")
-            self.first_time = False
+        # if self.first_time:
+        #     self.view.marker_manager.create_marker(pos, symbol="!")
+        #     self.first_time = False
 
         x, y = pos
         grid_x = x // TILE_SIZE

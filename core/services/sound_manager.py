@@ -25,8 +25,8 @@ class SoundManager:
         self.sfx_death = pygame.mixer.Sound(self.sfx_death_path)
 
         # Adjust default volumes
-        self.muted = False
-        pygame.mixer.music.set_volume(0.25)  # background music
+        self.muted = True
+        pygame.mixer.music.set_volume(0)  # background music default: 0.25
         self.sfx_birth.set_volume(0.5)
         self.sfx_death.set_volume(0.4)
 
