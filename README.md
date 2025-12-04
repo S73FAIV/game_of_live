@@ -20,11 +20,10 @@ From there the Achievement- and Tutorial-Manager can interpret those events.
 
 ### Music
 
+#### In-Game
+
 <a href="https://pixabay.com/music/pop-lofi-loop-hopeful-city-321581/" title="Pixabay Lofi Loop Hopeful City">Pixabay Lofi Loop Hopeful City</a>
 
+#### Trailer
 
-### Not used:
-
-<a href="https://www.flaticon.com/free-icons/fast-forward" title="fast forward icons">Fast forward icons created by Google - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/next" title="next icons">Next icons created by Google - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/pause" title="pause icons">Pause icons created by Google - Flaticon</a>
+<a href="https://pixabay.com/sound-effects/lofi-synth-pattern-29946/" title="LoFi Synth Pattern">LoFi Synth Pattern</a>
