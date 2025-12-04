@@ -2,7 +2,7 @@
 
 ## The Trailer
 
-<video controls src="https://github.com/S73FAIV/game_of_live/blob/main/assets/trailer/trailer-game-of-live.mp4" title="Conways Game of Live - Trailer"></video>
+<a href="https://github.com/S73FAIV/game_of_live/blob/main/assets/trailer/trailer-game-of-live.mp4" title="Conways Game of Live - Trailer">Click to download trailer</a>
 
 ## Architecture:
 
